@@ -1,6 +1,7 @@
 package main
 
 import (
+	AD "MIA_2S_P2_201513656/Comandos/AdministradorDiscos"
 	"fmt"
 	"strings"
 )
@@ -16,7 +17,16 @@ func Analizar(entrada string){
 
 	// *============================* ADMINISTRACION DE DISCOS *============================*
 	if strings.ToLower(parametros[0])=="mkdisk"{
-		if len(parametros)>1{					
+		if len(parametros)>1{	
+			AD.Mkdisk(parametros)				
+			//respuesta = AD.Mkdisk(parametros)
+		}else{
+			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
+			//respuesta = "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
+		}
+	}else if strings.ToLower(parametros[0])=="rmdisk"{
+		if len(parametros)>1{	
+			AD.Rmdisk(parametros)				
 			//respuesta = AD.Mkdisk(parametros)
 		}else{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
