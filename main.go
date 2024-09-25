@@ -32,6 +32,14 @@ func Analizar(entrada string){
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
 			//respuesta = "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
+	}else if strings.ToLower(parametros[0])=="fdisk"{
+		if len(parametros)>1{	
+			AD.Rmdisk(parametros)				
+			//respuesta = AD.Mkdisk(parametros)
+		}else{
+			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
+			//respuesta = "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
+		}
 	// *============================* OTROS *============================*
 	} else if strings.ToLower(parametros[0]) == "" {
 		//para agregar lineas con cada enter sin tomarlo como error
