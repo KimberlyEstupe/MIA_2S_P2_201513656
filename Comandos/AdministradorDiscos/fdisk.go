@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func Fdisk(entrada []string) {
+func Fdisk(entrada []string) string{
 	var respuesta string
 	//size, path, name obligatorios
 	//unit, type, fit
@@ -23,7 +23,7 @@ func Fdisk(entrada []string) {
 	
 	var add int           //opcional (para aumentar o reducir el tamaño de una particion)
 	var delete int		  //1-> full; 2->fast
-	var opcion int        // 0 -> crear; 1 -> add; 2 -> delete (por defecto es 0 = CREAR)
+	var opcion int        // 0 -> crear; 1 -> add; 2 -> delete(por defecto es 0 = CREAR)
 	
 	Valido := true        //Para validar que los parametros cumplen con los requisitos
 	var sizeValErr string //Para reportar el error si no se pudo convertir a entero el size
@@ -181,7 +181,7 @@ func Fdisk(entrada []string) {
 		}
 
 		// ==================== CREACION: OPCION 1====================
-		if opcion == 1{
+		if opcion == 0{
 			//Si la particion es tipo extendida validar que no exista alguna extendida
 			isPartExtend := false //Indica si se puede usar la particion extendida
 			isName := true        //Valida si el nombre no se repite (true no se repite)
@@ -319,7 +319,7 @@ func Fdisk(entrada []string) {
 				} else {
 					fmt.Println("FDISK Error. No existe una particion extendida en la cual crear un particion logica")
 					respuesta += "FDISK Error. No existe una particion extendida en la cual crear un particion logica"+ "\n"
-					//return respuesta
+					return respuesta
 				}
 
 				//valido que la particion extendida si exista (podría haber entrado al error que no existe extendida)
@@ -328,15 +328,21 @@ func Fdisk(entrada []string) {
 					respuesta += primerAjusteLogicas(disco, partExtend, int32(sizeNewPart), name, fit) + "\n"//int32(sizeNewPart) es para castear el int a int32 que es el tipo que tiene el atributo en el struct Partition
 					//repLogicas(partExtend, disco)
 				}
-				//return respuesta
+				return respuesta
 			}
 		// ============================== FIN CREAR ==============================
-		}
+		}else if opcion == 1 {
+			fmt.Println("ADD")
+		// ============================== FIN ADD ==============================
+		}else if opcion == 2 {
+			fmt.Println("ELIMINAR")		
+		}// ============================== FIN ELIMINAR ==============================
 	}//fin valido
 
-	fmt.Println(unit,", ",tipe,", ",fit)
-	fmt.Println(add,", ",opcion)
-	fmt.Println(delete)
+	
+	
+	fmt.Println(delete,add)
+	return respuesta
 }
 
 // ============================================= PRIMER AJUSTE ==================================
