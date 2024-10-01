@@ -1,0 +1,63 @@
+body{
+    background: rgb(2,0,36);
+    background: linear-gradient(356deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 31%, rgba(0,212,255,1) 88%); 
+
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/*Ordenado de afuera hacia adentro*/
+p{    
+    margin: 25px 0px 0px 0px; /*Arriba derecha abajo izquierda*/
+    border: 0;
+    padding: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
+    color: rgb(2, 3, 56);
+    font-size: 14px;
+    
+}
+
+.entrada{
+    height: 200px; /*alto*/ 
+    width: 850px;  /*ancho*/
+    resize: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+
+}
+
+.salida{
+    height: 250px; /*alto*/ 
+    width: 850px;  /*ancho*/
+    resize: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+}
+
+.contenedorEjecutar{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* adjust the height to your liking */
+    width: 100%;
+    gap: 5px; /* Espacio entre los elementos flexibles */
+}
+
+button{
+    margin: 45px 5px;
+    border: 0;
+    padding: 0;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+
