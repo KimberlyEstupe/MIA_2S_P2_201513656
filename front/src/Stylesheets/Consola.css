@@ -20,7 +20,7 @@ p{
 }
 
 .entrada{
-    height: 200px; /*alto*/ 
+    height: 180px; /*alto*/ 
     width: 850px;  /*ancho*/
     resize: none;
     font-family: Arial, Helvetica, sans-serif;
