@@ -2,6 +2,8 @@ package main
 
 import (
 	AD "MIA_2S_P2_201513656/Comandos/AdministradorDiscos"
+	AA 	"MIA_2S_P2_201513656/Comandos/SistemaArchivos"
+	Us  "MIA_2S_P2_201513656/Comandos/Usuario"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -131,6 +133,28 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
 			return  "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
+	// *===================* ADMINISTRACION DE SISTEMA DE ARCHIVOS *======================*
+
+	}else if strings.ToLower(parametros[0])=="mkfs"{		
+		if len(parametros)>1{			
+			return AA.MKfs(parametros)
+		}else{
+			fmt.Println("ERROR EN MKFS, FALTAN PARAMETROS")
+			return "ERROR EN MKFS, FALTAN PARAMETROS"
+		}
+	
+	// *===================* ADMINISTRACION DE USUARIOS Y CARPETAS *======================*
+
+	}else if strings.ToLower(parametros[0])=="login"{		
+		if len(parametros)>1{			
+			return Us.Login(parametros)
+		}else{
+			fmt.Println("ERROR EN LOGIN, FALTAN PARAMETROS")
+			return "ERROR EN LOGIN, FALTAN PARAMETROS"
+		}
+	
+	}else if strings.ToLower(parametros[0])=="logout"{		
+		return Us.Logout()
 	// *============================* OTROS *============================*
 	} else if strings.ToLower(parametros[0]) == "" {
 		//para agregar lineas con cada enter sin tomarlo como error
@@ -139,4 +163,5 @@ func Analizar(entrada string)string{
 		fmt.Println("Comando no reconocible")
 		return "ERROR: COMANDO NO RECONOCIBLE"
 	}
+	return " "
 }
