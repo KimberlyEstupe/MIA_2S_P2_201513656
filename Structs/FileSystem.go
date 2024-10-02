@@ -2,6 +2,7 @@ package Structs
 
 import (
 	"MIA_2S_P2_201513656/Herramientas"
+	"encoding/binary"
 	"fmt"
 	"os"
 	"strings"
@@ -63,7 +64,6 @@ type Pointerblock struct {
 	B_pointers [16]int32 //apuntadores a bloques (archivo/carpeta)
 }
 
-// Journaling EXT3
 type Journaling struct {
 	Size      int32
 	Ultimo    int32
@@ -115,6 +115,26 @@ func GetB_content(nombre string) string {
 	return nombre //-1 el nombre no tiene bytes nulos
 }
 
+// funciones de journaling
+func GetOperation(nombre string) string {
+	posicionNulo := strings.IndexByte(nombre, 0)
+	nombre = nombre[:posicionNulo] //guarda la cadena hasta donde encontro un byte nulo
+	return nombre
+}
+
+func GetPath(nombre string) string {
+	posicionNulo := strings.IndexByte(nombre, 0)
+	nombre = nombre[:posicionNulo] //guarda la cadena hasta donde encontro un byte nulo
+	return nombre
+}
+
+func GetContent(nombre string) string {
+	posicionNulo := strings.IndexByte(nombre, 0)
+	nombre = nombre[:posicionNulo] //guarda la cadena hasta donde encontro un byte nulo
+	return nombre
+}
+
+
 // para leer byte por byte los bitmaps (reportes)
 type Bite struct {
 	Val [1]byte
@@ -153,3 +173,31 @@ func RepSB(particion Partition, disco *os.File) string {
 	return cad
 }
 
+// ======================================== REPORTE JOUNAL ==========================
+func RepJournal(particion Partition, disco *os.File) string {
+	cad := ""
+	//cargar el superbloque
+	var superBloque Superblock
+	err := Herramientas.ReadObject(disco, &superBloque, int64(particion.Start))
+	if err != nil {
+		fmt.Println("REP Error. Particion sin formato")
+		cad += " <tr>\n  <td> Error No Journaling </td> \n </tr> \n"
+		return cad
+	}
+
+	if superBloque.S_filesystem_type == 3 {
+		//Cargar el journaling
+		var journal Journaling
+		//Nota: para las logicas el superbloque se escribe/lee en particion.start+binary.size(structs.EBR)
+		Herramientas.ReadObject(disco, &journal, int64(particion.Start+int32(binary.Size(Superblock{}))))
+		for i := int32(0); i <= journal.Ultimo; i++ {
+			dataJ := journal.Contenido[i]
+			cad += " <tr>\n  <td> Operacion </td> \n  <td> Path </td> \n  <td> Contenido </td> \n  <td> Fecha </td> \n </tr> \n"
+			cad += fmt.Sprintf(" <tr>\n  <td> %s </td> \n  <td> %s </td> \n  <td> %s </td> \n  <td> %s </td> \n </tr> \n", GetOperation(string(dataJ.Operation[:])), GetPath(string(dataJ.Path[:])), GetContent(string(dataJ.Content[:])), string(dataJ.Date[:]))
+		}
+	} else {
+		cad += " <tr>\n  <td> Error No Journaling </td> \n </tr> \n"
+		fmt.Println("REP Error: No se encontro Journaling debido a que la particion no tiene formato EXT3")
+	}
+	return cad
+}

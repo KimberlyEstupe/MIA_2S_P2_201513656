@@ -112,6 +112,7 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
 			return  "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
+
 	}else if strings.ToLower(parametros[0])=="fdisk"{
 		if len(parametros)>1{	
 			return AD.Rmdisk(parametros)		
@@ -119,6 +120,7 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
 			return  "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
+
 	}else if strings.ToLower(parametros[0])=="mount"{
 		if len(parametros)>1{	
 			return AD.Mount(parametros)			
@@ -126,6 +128,7 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
 			return "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
+		
 	}else if strings.ToLower(parametros[0])=="unmount"{
 		if len(parametros)>1{	
 			return AD.Unmoun(parametros)		
@@ -163,5 +166,4 @@ func Analizar(entrada string)string{
 		fmt.Println("Comando no reconocible")
 		return "ERROR: COMANDO NO RECONOCIBLE"
 	}
-	return " "
 }
