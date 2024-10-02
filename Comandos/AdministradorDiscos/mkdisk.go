@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func Mkdisk(entrada []string)  {
+func Mkdisk(entrada []string) string {
 	var size int			//Obligatorio	
 	var pathE string		//Obligatorio
 	fit :="F"		//Puede ser FF, BF, WF, por default es FF
@@ -29,7 +29,7 @@ func Mkdisk(entrada []string)  {
 		if len(valores)!=2{
 			fmt.Println("ERROR MKDIS, valor desconocido de parametros ",valores[1])
 			Valido = false
-			//return "ERROR MKDIS, valor desconocido de parametros "+valores[1]
+			return "ERROR MKDIS, valor desconocido de parametros "+valores[1]
 		}
 
 		//********************  SIZE *****************
@@ -40,11 +40,11 @@ func Mkdisk(entrada []string)  {
 			if err != nil {
 				fmt.Println("MKDISK Error: -size debe ser un valor numerico. se leyo ", valores[1])
 				Valido = false
-				//return "MKDISK Error: -size debe ser un valor numerico. se leyo "+ valores[1]
+				return "MKDISK Error: -size debe ser un valor numerico. se leyo "+ valores[1]
 			} else if size <= 0 { //se valida que sea mayor a 0 (positivo)
 				fmt.Println("MKDISK Error: -size debe ser un valor positivo mayor a cero (0). se leyo ", valores[1])
 				Valido = false
-				//return "MKDISK Error: -size debe ser un valor positivo mayor a cero (0). se leyo "+ valores[1]
+				return "MKDISK Error: -size debe ser un valor positivo mayor a cero (0). se leyo "+ valores[1]
 			}
 
 		//********************  Fit *****************
@@ -68,7 +68,7 @@ func Mkdisk(entrada []string)  {
 			} else if strings.ToLower(valores[1]) != "m" {
 				fmt.Println("MKDISK Error en -unit. Valores aceptados: k, m. ingreso: ", valores[1])
 				Valido = false
-				//return "MKDISK Error en -unit. Valores aceptados: k, m. ingreso: "+valores[1]
+				return "MKDISK Error en -unit. Valores aceptados: k, m. ingreso: "+valores[1]
 			}
 
 		//******************* PATH *************
@@ -79,7 +79,7 @@ func Mkdisk(entrada []string)  {
 		} else {
 			fmt.Println("MKDISK Error: Parametro desconocido: ", valores[0])
 			Valido = false
-			//return "MKDISK Error: Parametro desconocido: "+ valores[0] //por si en el camino reconoce algo invalido de una vez se sale
+			return "MKDISK Error: Parametro desconocido: "+ valores[0] //por si en el camino reconoce algo invalido de una vez se sale
 		}
 	}
 
@@ -87,11 +87,13 @@ func Mkdisk(entrada []string)  {
 	if pathE==""{
 		fmt.Println("ERROR MKDISK; falta parametro path")
 		Valido = false
+		return "ERROR MKDISK; falta parametro path"
 	}
 
 	if size==0{
 		fmt.Println("ERROR MKDISK: falta parametro size")
 		Valido = false
+		return "ERROR MKDISK: falta parametro size"
 	}
 
 	//Si todo es correcto
@@ -101,20 +103,20 @@ func Mkdisk(entrada []string)  {
 		err := Herramientas.CrearDisco(pathE)
 		if err != nil {
 			fmt.Println("MKDISK Error: ", err)
-			//return "MKDISK Error: "+err.Error()
+			return "MKDISK Error: "+err.Error()
 		}
 		// Open bin file
 		file, err := Herramientas.OpenFile(pathE)
-		if err != nil {
-			//return "MKDISK Error: "+err.Error()
+		if err != nil {			
 			fmt.Println("MKDISK Error: "+err.Error())
+			return "MKDISK Error: "+err.Error()
 		}
 
 		datos := make([]byte, tam)
 		newErr := Herramientas.WriteObject(file, datos, 0)
 		if newErr != nil {
 			fmt.Println("MKDISK Error: ", newErr)
-			//return "MKDISK Error: " + newErr.Error()
+			return "MKDISK Error: " + newErr.Error()
 		}
 
 		//obtener hora para el id
@@ -133,6 +135,7 @@ func Mkdisk(entrada []string)  {
 		idTmp, err := strconv.Atoi(cad)
 		if err != nil {
 			fmt.Println("MKDISK Error: no converti fecha en entero para id")
+			return "MKDISK Error: no converti fecha en entero para id"
 		}
 		//fmt.Println("id guardado actual ", idTmp)
 		// Create a new instance of MBR
@@ -143,8 +146,8 @@ func Mkdisk(entrada []string)  {
 		copy(newMBR.FechaC[:], ahora.Format("02/01/2006 15:04"))
 		// Write object in bin file
 		if err := Herramientas.WriteObject(file, newMBR, 0); err != nil {
-			//return "ERROR"
 			fmt.Println("MKDISK Error: "+err.Error())
+			return "MKDISK Error: "+err.Error()
 		}
 
 		// Close bin file
@@ -154,15 +157,16 @@ func Mkdisk(entrada []string)  {
 
 		//imprimir el disco creado para validar que todo este correcto
 		var TempMBR Structs.MBR
-		if err := Herramientas.ReadObject(file, &TempMBR, 0); err != nil {
-			//return "ERROR"
+		if err := Herramientas.ReadObject(file, &TempMBR, 0); err != nil {			
 			fmt.Println("MKDISK Error: "+err.Error())
+			return "MKDISK Error: "+err.Error()
 		}
 		Structs.PrintMBR(TempMBR)
 
 		fmt.Println("\n======End MKDISK======")
 
-		//disco := strings.Split(pathE,"/")
-		//return "Disco " + disco[len(disco)-1] + " creado "
+		disco := strings.Split(pathE,"/")
+		return "EL disco '" + disco[len(disco)-1] + "' creado exitosamente"
 	}
+	return "ERROR MKDISK, ALGO SALIO MAL AL CREAR EL DISCO"
 }

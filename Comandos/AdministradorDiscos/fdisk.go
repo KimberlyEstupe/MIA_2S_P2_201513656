@@ -69,7 +69,7 @@ func Fdisk(entrada []string) string{
 			_, err := os.Stat(pathE)
 			if os.IsNotExist(err) {
 				fmt.Println("FDISK Error: El disco no existe")
-				break// Terminar el bucle porque encontramos un nombre único
+				return "FDISK Error: El disco no existe"// Terminar el bucle porque encontramos un nombre único
 			}
 		
 		//******************* Type *************		
@@ -81,7 +81,7 @@ func Fdisk(entrada []string) string{
 				tipe = "L"
 			} else if strings.ToLower(valores[1]) != "p" {
 				fmt.Println("FDISK Error en -type. Valores aceptados: e, l, p. ingreso: ", valores[1])
-				break
+				return "FDISK Error en -type. Valores aceptados: e, l, p. ingreso: "+ valores[1]
 			}
 
 		//********************  Fit *****************
@@ -92,7 +92,7 @@ func Fdisk(entrada []string) string{
 				fit = "F"
 			}else if strings.ToLower(valores[1])!="wf"{
 				fmt.Println("EEROR: PARAMETRO FIT INCORRECTO. VALORES ACEPTADO: FF, BF,WF. SE INGRESO:",valores[1])
-				break
+				return "EEROR: PARAMETRO FIT INCORRECTO. VALORES ACEPTADO: FF, BF,WF. SE INGRESO:"+valores[1]
 			}
 			
 			
@@ -118,16 +118,16 @@ func Fdisk(entrada []string) string{
 			} else {
 				fmt.Println("FDISK Error. Valor de delete desconocido")
 				Valido = false
-				break
+				return "FDISK Error. Valor de delete desconocido"
 			}
 		//******************** ADD *****************
 		} else if strings.ToLower(valores[0]) == "add" {
 			var err error
 			add, err = strconv.Atoi(valores[1]) //se convierte el valor en un entero
 			if err != nil {
-				fmt.Println("FDISK Error: El valor de \"add\" debe ser un valor numerico. se leyo ", tmp[1])
+				fmt.Println("FDISK Error: El valor de \"add\" debe ser un valor numerico. se leyo ", valores[1])
 				Valido = false
-				break
+				return "FDISK Error: El valor de \"add\" debe ser un valor numerico. se leyo "+ valores[1]
 			} else {
 				if opcion == 0 {
 					opcion = 1
@@ -136,7 +136,7 @@ func Fdisk(entrada []string) string{
 		//******************* ERROR EN LOS PARAMETROS *************
 		} else {
 			fmt.Println("FDISK Error: Parametro desconocido: ", valores[0])
-			break //por si en el camino reconoce algo invalido de una vez se sale
+			return "FDISK Error: Parametro desconocido: "+ valores[0] //por si en el camino reconoce algo invalido de una vez se sale
 		}
 	}
 
@@ -146,23 +146,28 @@ func Fdisk(entrada []string) string{
 			if size <= 0 { //se valida que sea mayor a 0 (positivo)
 				fmt.Println("FDISK Error: -size debe ser un valor positivo mayor a cero (0). se leyo ", size)
 				Valido = false
+				return "FDISK Error: -size debe ser un valor positivo mayor a cero (0). se leyo " + string(size)
 			}
 		} else { //Si sizeValErr es una cadena (por lo que no se pudo dar valor a size)
 			fmt.Println("FDISK Error: -size debe ser un valor numerico. se leyo ", sizeValErr)
 			Valido = false
+			return "FDISK Error: -size debe ser un valor numerico. se leyo "+ sizeValErr
 		}
 	}else{
 		fmt.Println("ERROR: FALTO PARAMETRO SIZE")
 		Valido =false
+		return "ERROR: FALTO PARAMETRO SIZE"
 	}
 
 	if pathE == ""{
 		fmt.Println("ERROR FDISK: FALTA PARAMETRO PATH")
 		Valido = false
+		return "ERROR FDISK: FALTA PARAMETRO PATH"
 	}
 	if name == ""{
 		fmt.Println("ERROR FDISK: FALTA PARAMETRO NAME")
 		Valido = false
+		return "ERROR FDISK: FALTA PARAMETRO NAME"
 	}
 
 	if Valido{
@@ -280,7 +285,7 @@ func Fdisk(entrada []string) string{
 				if guardar{
 					//sobreescribir el mbr
 					if err := Herramientas.WriteObject(disco, mbr, 0); err != nil {
-						respuesta += "Error Write " +err.Error()+ "\n"
+						return "Error Write " +err.Error()+ "\n"
 					}
 
 					//Se agrega el ebr de la particion extendida en el disco
@@ -289,7 +294,7 @@ func Fdisk(entrada []string) string{
 						ebr.Start = newPart.Start
 						ebr.Next = -1
 						if err := Herramientas.WriteObject(disco, ebr, int64(ebr.Start)); err != nil {
-							respuesta += "Error Write " +err.Error()+ "\n"
+							return "Error Write " +err.Error()+ "\n"
 						}
 					}
 					//para verificar que lo guardo
@@ -383,6 +388,7 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 							newPart = noPart
 							fmt.Println("FDISK Error. Espacio insuficiente")
 							respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+							return mbr, newPart, respuesta
 						}
 					}
 				}
@@ -402,6 +408,7 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 							newPart = noPart
 							fmt.Println("FDISK Error. Espacio insuficiente")
 							respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+							return mbr, newPart, respuesta
 						}
 					} else {
 						//4 existe
@@ -425,6 +432,7 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 							newPart = noPart
 							fmt.Println("FDISK Error. Espacio insuficiente")
 							respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+							return mbr, newPart, respuesta
 						}
 					} //fin si hay espacio entre 3 y 4
 				} //fin si no cabe antes de 3
@@ -446,6 +454,7 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 							newPart = noPart
 							fmt.Println("FDISK Error. Espacio insuficiente")
 							respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+							return mbr, newPart, respuesta
 						}
 					} else {
 						//4 existe (estamos entre 2 y 4)
@@ -464,6 +473,7 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 								newPart = noPart
 								fmt.Println("FDISK Error. Espacio insuficiente")
 								respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+								return mbr, newPart, respuesta
 							}
 						} //Fin si cabe antes o despues de 4
 					} //fin de 4 existe o no existe
@@ -486,6 +496,7 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 							newPart = noPart
 							fmt.Println("FDISK Error. Espacio insuficiente")
 							respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+							return mbr, newPart, respuesta
 						}
 					} else {
 						//si 4 existe
@@ -512,7 +523,8 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 						} else {
 							newPart = noPart
 							fmt.Println("FDISK Error. Espacio insuficiente")
-							respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+							respuesta = "FDISK Error. Espacio insuficiente"+ "\n"
+							return mbr, newPart, respuesta
 						}
 					} //Fin si 4 existe o no (3 activa)
 				} //Fin 3 existe o no existe
@@ -539,7 +551,8 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 					} else {
 						newPart = noPart
 						fmt.Println("FDISK Error. Espacio insuficiente")
-						respuesta +="FDISK Error. Espacio insuficiente"+ "\n"
+						respuesta ="FDISK Error. Espacio insuficiente"+ "\n"
+						return mbr, newPart, respuesta
 					}
 				} else {
 					//4 existe
@@ -556,7 +569,8 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 					} else {
 						newPart = noPart
 						fmt.Println("FDISK Error. Espacio insuficiente")
-						respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+						respuesta = "FDISK Error. Espacio insuficiente"+ "\n"
+						return mbr, newPart, respuesta
 					}
 				} //Fin 4 existe o no existe
 			} else {
@@ -575,7 +589,8 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 						} else {
 							newPart = noPart
 							fmt.Println("FDISK Error. Espacio insuficiente")
-							respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+							respuesta = "FDISK Error. Espacio insuficiente"+ "\n"
+							return mbr, newPart, respuesta
 						}
 					} else {
 						//4 existe
@@ -597,7 +612,8 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 						} else {
 							newPart = noPart
 							fmt.Println("FDISK Error. Espacio insuficiente")
-							respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+							respuesta = "FDISK Error. Espacio insuficiente"+ "\n"
+							return mbr, newPart, respuesta
 						}
 					} //fin 4 existe o no existe
 				} //Fin para entre 1 y 3, y despues de 3
@@ -633,7 +649,8 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 					} else {
 						newPart = noPart
 						fmt.Println("FDISK Error. Espacio insuficiente")
-						respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+						respuesta = "FDISK Error. Espacio insuficiente"+ "\n"
+						return mbr, newPart, respuesta
 					}
 				} else {
 					//4 existe
@@ -650,7 +667,8 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 					} else {
 						newPart = noPart
 						fmt.Println("FDISK Error. Espacio insuficiente")
-						respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+						respuesta = "FDISK Error. Espacio insuficiente"+ "\n"
+						return mbr, newPart, respuesta
 					}
 				} //Fin de 4 existe o no existe
 			} //Fin espacio entre 1 y 2 o despues de 2
@@ -695,14 +713,16 @@ func primerAjuste(mbr Structs.MBR, typee string, sizeMBR int32, sizeNewPart int3
 			} else {
 				newPart = noPart
 				fmt.Println("FDISK Error. Espacio insuficiente")
-				respuesta += "FDISK Error. Espacio insuficiente"+ "\n"
+				respuesta = "FDISK Error. Espacio insuficiente"+ "\n"
+				return mbr, newPart, respuesta
 			}
 		} //Fin antes y despues de 1
 		//Fin particion 4
 	} else {
 		newPart = noPart
 		fmt.Println("FDISK Error. Particiones primarias y/o extendidas ya no disponibles")
-		respuesta += "FDISK Error. Particiones primarias y/o extendidas ya no disponibles"+ "\n"
+		respuesta = "FDISK Error. Particiones primarias y/o extendidas ya no disponibles"+ "\n"
+		return mbr, newPart, respuesta
 	}
 
 	return mbr, newPart, respuesta
@@ -741,7 +761,7 @@ func primerAjusteLogicas(disco *os.File, partExtend Structs.Partition, sizeNewPa
 				respuesta += "Particion con nombre "+ name+ " creada correctamente"+ "\n"
 			} else {
 				fmt.Println("FDISK Error. Espacio insuficiente logicas")
-				respuesta += "FDISK Error. Espacio insuficiente logicas"+ "\n"
+				return "FDISK Error. Espacio insuficiente logicas"+ "\n"
 			}
 		} else {
 			//Para insertar si se elimino la primera particion (primer EBR)
@@ -758,7 +778,7 @@ func primerAjusteLogicas(disco *os.File, partExtend Structs.Partition, sizeNewPa
 				respuesta += "Particion con nombre " + name+ " creada correctamente"+ "\n"
 			} else {
 				fmt.Println("FDISK Error. Espacio insuficiente logicas 2")
-				respuesta += "FDISK Error. Espacio insuficiente logicas"+ "\n"
+				return "FDISK Error. Espacio insuficiente logicas"+ "\n"
 			}
 		}
 		//Si esta despues del primer ebr
@@ -794,14 +814,13 @@ func primerAjusteLogicas(disco *os.File, partExtend Structs.Partition, sizeNewPa
 				newStart := actual.GetEnd()                          //la nueva ebr inicia donde termina la ultima ebr
 				actual.SetInfo(fit, newStart, sizeNewPart, name, -1) //cambia actual con los nuevos valores
 				if err := Herramientas.WriteObject(disco, actual, int64(actual.Start)); err != nil {
-					respuesta += "Error Write " +err.Error()+ "\n"
-					return respuesta
+					return "Error Write " +err.Error()+ "\n"
 				}
 				fmt.Println("Particion con nombre ", name, " creada correctamente")
 				respuesta += "Particion con nombre "+ name+" creada correctamente"+ "\n"
 			} else {
 				fmt.Println("FDISK Error. Espacio insuficiente logicas 3")
-				respuesta += "FDISK Error. Espacio insuficiente logicas"+ "\n"
+				return "FDISK Error. Espacio insuficiente logicas"+ "\n"
 			}
 		} else {
 			//Entre dos particiones
@@ -825,7 +844,7 @@ func primerAjusteLogicas(disco *os.File, partExtend Structs.Partition, sizeNewPa
 				respuesta += "Particion con nombre "+ name +" creada correctamente"+ "\n"
 			} else {
 				fmt.Println("FDISK Error. Espacio insuficiente logicas 4")
-				respuesta+="FDISK Error. Espacio insuficiente logicas "+ "\n"
+				return "FDISK Error. Espacio insuficiente logicas "+ "\n"
 			}
 		}
 	}

@@ -16,8 +16,8 @@ func Unmoun(entrada []string) (string){
 		valores := strings.Split(tmp,"=")
 
 		if len(valores)!=2{
-			fmt.Println("ERROR MOUNT, valor desconocido de parametros ",valores[1])
-			respuesta += "ERROR MOUNT, valor desconocido de parametros " + valores[1]
+			fmt.Println("ERROR UNMOUNT, valor desconocido de parametros ",valores[1])
+			respuesta += "ERROR UNMOUNT, valor desconocido de parametros " + valores[1]
 			//Si falta el valor del parametro actual lo reconoce como error e interrumpe el proceso
 			return respuesta
 		}
@@ -25,8 +25,8 @@ func Unmoun(entrada []string) (string){
 		if strings.ToLower(valores[0]) == "id" {
 			id = strings.ToUpper(valores[1])
 		}else{
-			fmt.Println("MKFS Error: Parametro desconocido: ", valores[0])
-			return "MKFS Error: Parametro desconocido: " + valores[0] //por si en el camino reconoce algo invalido de una vez se sale
+			fmt.Println("UNMOUNT Error: Parametro desconocido: ", valores[0])
+			return "UNMOUNT Error: Parametro desconocido: " + valores[0] //por si en el camino reconoce algo invalido de una vez se sale
 		}
 	}
 
@@ -47,13 +47,13 @@ func Unmoun(entrada []string) (string){
 		if eliminar{
 			Disco, err := Herramientas.OpenFile(pathDico)
 			if err != nil {
-				return "ERROR REP OPEN FILE "+err.Error()
+				return "ERROR UNMOUNT OPEN FILE "+err.Error()
 			}
 
 			var mbr Structs.MBR
 			// Read object from bin file
 			if err := Herramientas.ReadObject(Disco, &mbr, 0); err != nil {
-				return "ERROR REP READ FILE "+err.Error()
+				return "ERROR UNMOUNT READ FILE "+err.Error()
 			}
 
 			//Encontrar la particion en el disco
@@ -98,13 +98,6 @@ func Unmoun(entrada []string) (string){
 			return "ERROR UNMOUNT: ID NO ENCONTRADO"
 		}
 
-		
-
-		
-
-
-
-		
 	}else{
 		fmt.Println("ERROR UNMOUNT NO SE INGRESO PARAMETRO ID")
 		return "ERROR UNMOUNT NO SE INGRESO PARAMETRO ID"

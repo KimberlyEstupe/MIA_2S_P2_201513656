@@ -65,8 +65,7 @@ func getCadenaAnalizar(w http.ResponseWriter, r *http.Request) {
 					fmt.Println("Comando en ejecucion: ", linea[0])
 					respuesta += "***************************************************************************************************************************\n"
 					respuesta += "Comando en ejecucion: " + linea[0] + "\n"
-					//respuesta += Analizar(linea[0])  + "\n"
-					Analizar(linea[0]) 
+					respuesta += Analizar(linea[0])  + "\n"
 				}	
 				//Comentarios			
 				if len(linea) > 1 && linea[1] != "" {
@@ -90,7 +89,7 @@ func getCadenaAnalizar(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Analizar(entrada string){
+func Analizar(entrada string)string{
 	tmp := strings.TrimRight(entrada," ")
 	//Recibe una linea y la descompone entre el comando y sus parametros
 	parametros:= strings.Split(tmp, " -")
@@ -99,49 +98,45 @@ func Analizar(entrada string){
 	if strings.ToLower(parametros[0])=="mkdisk"{
 		if len(parametros)>1{	
 			AD.Mkdisk(parametros)				
-			//respuesta = AD.Mkdisk(parametros)
+			return AD.Mkdisk(parametros)
 		}else{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
-			//respuesta = "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
+			return "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 	}else if strings.ToLower(parametros[0])=="rmdisk"{
 		if len(parametros)>1{	
-			AD.Rmdisk(parametros)				
-			//respuesta = AD.Mkdisk(parametros)
+			return AD.Rmdisk(parametros)		
 		}else{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
-			//respuesta = "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
+			return  "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 	}else if strings.ToLower(parametros[0])=="fdisk"{
 		if len(parametros)>1{	
-			AD.Rmdisk(parametros)				
-			//respuesta = AD.Mkdisk(parametros)
+			return AD.Rmdisk(parametros)		
 		}else{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
-			//respuesta = "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
+			return  "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 	}else if strings.ToLower(parametros[0])=="mount"{
 		if len(parametros)>1{	
-			AD.Mount(parametros)				
-			//respuesta = AD.Mkdisk(parametros)
+			return AD.Mount(parametros)			
 		}else{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
-			//respuesta = "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
+			return "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 	}else if strings.ToLower(parametros[0])=="unmount"{
 		if len(parametros)>1{	
-			AD.Unmoun(parametros)				
-			//respuesta = AD.Mkdisk(parametros)
+			return AD.Unmoun(parametros)		
 		}else{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
-			//respuesta = "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
+			return  "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 	// *============================* OTROS *============================*
 	} else if strings.ToLower(parametros[0]) == "" {
 		//para agregar lineas con cada enter sin tomarlo como error
-		return 
+		return ""
 	} else {
 		fmt.Println("Comando no reconocible")
-		//return "ERROR: COMANDO NO RECONOCIBLE"
+		return "ERROR: COMANDO NO RECONOCIBLE"
 	}
 }
