@@ -40,7 +40,7 @@ func MKfs(entrada []string) (string){
 			if strings.ToLower(valores[1]) == "3fs" {
 				fs = "3fs"
 			} else if strings.ToLower(valores[1]) != "2fs" {
-				fmt.Println("MKFS Error en -fs. Valores aceptados: 2fs o 3fs. ingreso: ", tmp[1])
+				fmt.Println("MKFS Error en -fs. Valores aceptados: 2fs o 3fs. ingreso: ", valores[1])
 				Valido = false
 				break
 			}

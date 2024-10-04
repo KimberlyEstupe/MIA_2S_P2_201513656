@@ -44,18 +44,21 @@ func Mkdisk(entrada []string) string {
 			} else if size <= 0 { //se valida que sea mayor a 0 (positivo)
 				fmt.Println("MKDISK Error: -size debe ser un valor positivo mayor a cero (0). se leyo ", valores[1])
 				Valido = false
-				return "MKDISK Error: -size debe ser un valor positivo mayor a cero (0). se leyo "+ valores[1]
+				return "MKDISK Error: -size debe ser un valor positivo mayor a cero (0). se leyo"+ valores[1]
 			}
 
 		//********************  Fit *****************
-		}else if strings.ToLower(valores[0])=="fit"{
-			if strings.ToLower(valores[0])=="bf"{
+		}else if strings.ToLower(valores[0])=="fit"{			
+			
+			fmt.Println("fit",valores[1],"-")
+			if strings.ToLower(valores[1])=="bf"{
 				fit = "B"
-			}else if strings.ToLower(valores[0])=="wf"{
+			}else if strings.ToLower(valores[1])=="wf"{
 				fit = "W"
-			}else if strings.ToLower(valores[0])!="ff"{
+			}else if strings.ToLower(valores[1])!="ff"{
 				fmt.Println("EEROR: PARAMETRO FIT INCORRECTO. VALORES ACEPTADO: FF, BF,WF. SE INGRESO: ",valores[1])
 				Valido = false
+				return "MKDISK ERROR: PARAMETRO FIT INCORRECTO. VALORES ACEPTADO: FF, BF,WF. SE INGRESO: "+ valores[1]
 			}			
 		
 		//*************** UNIT ***********************

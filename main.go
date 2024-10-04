@@ -2,8 +2,10 @@ package main
 
 import (
 	AD "MIA_2S_P2_201513656/Comandos/AdministradorDiscos"
-	AA 	"MIA_2S_P2_201513656/Comandos/SistemaArchivos"
-	Us  "MIA_2S_P2_201513656/Comandos/Usuario"
+	SA 	"MIA_2S_P2_201513656/Comandos/SistemaArchivos"
+	USR  "MIA_2S_P2_201513656/Comandos/Usuario"
+	REP "MIA_2S_P2_201513656/Comandos/Rep"
+	AP	"MIA_2S_P2_201513656/Comandos/AdministradorPermisos"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -109,16 +111,16 @@ func Analizar(entrada string)string{
 		if len(parametros)>1{	
 			return AD.Rmdisk(parametros)		
 		}else{
-			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
-			return  "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
+			fmt.Println("ERROR EN RMDISK, FALTAN PARAMETROS EN MKDISK")
+			return  "ERROR EN RMDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 
 	}else if strings.ToLower(parametros[0])=="fdisk"{
 		if len(parametros)>1{	
-			return AD.Rmdisk(parametros)		
+			return AD.Fdisk(parametros)		
 		}else{
-			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
-			return  "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
+			fmt.Println("ERROR EN FDISK, FALTAN PARAMETROS EN MKDISK")
+			return  "ERROR EN FDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 
 	}else if strings.ToLower(parametros[0])=="mount"{
@@ -128,7 +130,7 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
 			return "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
-		
+
 	}else if strings.ToLower(parametros[0])=="unmount"{
 		if len(parametros)>1{	
 			return AD.Unmoun(parametros)		
@@ -140,7 +142,7 @@ func Analizar(entrada string)string{
 
 	}else if strings.ToLower(parametros[0])=="mkfs"{		
 		if len(parametros)>1{			
-			return AA.MKfs(parametros)
+			return SA.MKfs(parametros)
 		}else{
 			fmt.Println("ERROR EN MKFS, FALTAN PARAMETROS")
 			return "ERROR EN MKFS, FALTAN PARAMETROS"
@@ -150,15 +152,88 @@ func Analizar(entrada string)string{
 
 	}else if strings.ToLower(parametros[0])=="login"{		
 		if len(parametros)>1{			
-			return Us.Login(parametros)
+			return USR.Login(parametros)
 		}else{
 			fmt.Println("ERROR EN LOGIN, FALTAN PARAMETROS")
 			return "ERROR EN LOGIN, FALTAN PARAMETROS"
 		}
 	
 	}else if strings.ToLower(parametros[0])=="logout"{		
-		return Us.Logout()
+		return USR.Logout()
+		
+	}else if strings.ToLower(parametros[0])=="mkgrp"{		
+		if len(parametros)>1{			
+			return USR.Mkgrp(parametros)
+		}else{
+			fmt.Println("ERROR EN MKGRP, FALTAN PARAMETROS")
+			return "ERROR EN MKGRP, FALTAN PARAMETROS"
+		}
+		
+	}else if strings.ToLower(parametros[0])=="rmgrp"{		
+		if len(parametros)>1{			
+			return USR.Rmgrp(parametros)
+		}else{
+			fmt.Println("ERROR EN RMGRP, FALTAN PARAMETROS")
+			return "ERROR EN RMGRP, FALTAN PARAMETROS"
+		}
+	
+	}else if strings.ToLower(parametros[0])=="mkusr"{		
+		if len(parametros)>1{			
+			return USR.Mkusr(parametros)
+		}else{
+			fmt.Println("ERROR EN RMGRP, FALTAN PARAMETROS")
+			return "ERROR EN RMGRP, FALTAN PARAMETROS"
+		}	
+
+	}else if strings.ToLower(parametros[0])=="rmusr"{		
+		if len(parametros)>1{			
+			return USR.Rmusr(parametros)
+		}else{
+			fmt.Println("ERROR EN RMUSR, FALTAN PARAMETROS")
+			return "ERROR EN RMUSR, FALTAN PARAMETROS"
+		}
+
+	}else if strings.ToLower(parametros[0])=="chgrp"{		
+		if len(parametros)>1{			
+			return USR.Chgrp(parametros)
+		}else{
+			fmt.Println("ERROR EN CHGRP, FALTAN PARAMETROS")
+			return "ERROR EN CHGRP, FALTAN PARAMETROS"
+		}
+	
+	// *=======================* PERMISOS DE CARPETAS Y ARHICVOS *============================*
+	}else if strings.ToLower(parametros[0])=="mkfile"{		
+		if len(parametros)>1{			
+			return AP.MKfile(parametros)
+		}else{
+			fmt.Println("ERROR EN MKFILE, FALTAN PARAMETROS")
+			return "ERROR EN MKFILE, FALTAN PARAMETROS"
+		}
+	
+	}else if strings.ToLower(parametros[0])=="cat"{		
+		if len(parametros)>1{			
+			return AP.Cat(parametros)
+		}else{
+			fmt.Println("ERROR EN CAT, FALTAN PARAMETROS")
+			return "ERROR EN CAT, FALTAN PARAMETROS"
+		}
+	
+	}else if strings.ToLower(parametros[0])=="mkdir"{		
+		if len(parametros)>1{			
+			return AP.Mkdir(parametros)
+		}else{
+			fmt.Println("ERROR EN MKDIR, FALTAN PARAMETROS")
+			return "ERROR EN MKDIR, FALTAN PARAMETROS"
+		}
 	// *============================* OTROS *============================*
+	} else if strings.ToLower(parametros[0]) == "rep" {
+		//REP
+		if len(parametros) > 1 {
+			return REP.Rep(parametros)
+		} else {
+			fmt.Println("REP ERROR: parametros no encontrados")
+			return "REP ERROR: parametros no encontrados"
+		}
 	} else if strings.ToLower(parametros[0]) == "" {
 		//para agregar lineas con cada enter sin tomarlo como error
 		return ""

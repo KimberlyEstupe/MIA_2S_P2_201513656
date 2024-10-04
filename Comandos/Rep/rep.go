@@ -71,10 +71,10 @@ func Rep(entrada []string) string{
 				fmt.Println("reporte ls")
 			case "journal":
 				journal(path, id)
-				fmt.Println("reporte inode")
+				fmt.Println("reporte journal")
 			case "tree":
 				tree(path,id)
-				fmt.Println("reporte block")
+				fmt.Println("reporte tree")
 			default:
 				fmt.Println("REP Error: Reporte ", name, " desconocido")
 				respuesta+="REP Error: Reporte "+ name+" desconocido"
@@ -685,7 +685,6 @@ func InodoLs(name string,lineaID []string,  idInodo int32, superBloque Structs.S
 	//cargar el inodo a reportar
 	var inodo Structs.Inode
 	Herramientas.ReadObject(file, &inodo, int64(superBloque.S_inode_start+(idInodo*int32(binary.Size(Structs.Inode{})))))
-
 	
 	//Busco el grupo y el usuario 							
 	usuario:= ""
@@ -711,11 +710,15 @@ func InodoLs(name string,lineaID []string,  idInodo int32, superBloque Structs.S
 	tipoArchivo := "Archivo"
 	var permisos string	
 	
-	//r w x
-	//r -> lectura
+	//Los permisos son 3 numeros porque son aplicados a: propierarios   grupos  y  otros
+	//Cada numero representa los permisos de lectura, escritura y ejecucion: r w x
+	// r lectura
 	// w escritura
 	// x ejecucion 
-	//son 3 numeros porque son aplicados a: propierarios   grupos  y  otros
+	//Si el numero de permisos es: 764, significa que:
+	//el propierario(7) tiene permisos de lectura escritura ejecucion
+	//el grupo(6) tiene permisos de lectura escritura
+	//otros(4) tienen permisos de lectura
 	for i:=0; i<3; i++{	
 		if string(inodo.I_perm[i])=="0"{//ninun permiso
 			permisos+="---"
@@ -738,9 +741,9 @@ func InodoLs(name string,lineaID []string,  idInodo int32, superBloque Structs.S
 
 	if string(inodo.I_type[:]) == "0"{
 		Color = "Violet"
-		tipoArchivo = "Carpeta"
-		permisos = "rw-rw-r--"		
+		tipoArchivo = "Carpeta"	
 	}
+	
 	permisos = "rw-rw-r--"	
 	contenido += "\n  <tr>"
 	contenido += "\n\t <td bgcolor='"+Color+"'> "+ permisos +"</td>"

@@ -244,3 +244,4 @@ func CreaCarpeta(idInode int32, carpeta string, initSuperBloque int64, disco *os
 	}// Fin for bloques directos
 	return 0
 }			
+
