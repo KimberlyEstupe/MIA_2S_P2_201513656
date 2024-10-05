@@ -335,13 +335,212 @@ func Fdisk(entrada []string) string{
 				}
 				return respuesta
 			}
-		// ============================== FIN CREAR ==============================
+		// =====================================================================================
+		// ======================================== ADD ========================================
+		// =====================================================================================
 		}else if opcion == 1 {
-			fmt.Println("ADD")
-		// ============================== FIN ADD ==============================
+			add = add * unit
+			//-------------------------si se quita espacio----------------------------------------------------------------------
+			//Particiones extendida o primarias
+			if add < 0 {
+				fmt.Println("Reducir espacio")
+				reducir := true //Si cambia a false es que redujo una de las primarias o la extendida
+				for i := 0; i < 4; i++{
+					nombre := Structs.GetName(string(mbr.Partitions[i].Name[:]))
+					if nombre == name{
+						reducir = false
+						newSize := mbr.Partitions[i].Size + int32(add)
+						if newSize > 0{
+							mbr.Partitions[i].Size += int32(add)
+							if err := Herramientas.WriteObject(disco, mbr, 0); err != nil { //Sobre escribir el mbr
+								return "ERROR FDISK: " + err.Error()
+							}
+							fmt.Println("Particion con nombre ", name, " se redujo correctamente")
+							return "Particion con nombre "+ name+" se redujo correctamente"
+						}else {
+							fmt.Println("FDISK Error. El tamaño que intenta eliminar es demasiado grande")
+							return "FDISK ERROR. El tamaño que intenta eliminar es demasiado grande"
+						}
+					}
+				}
+
+				//particiones logicas
+				if reducir{
+					var partExtendida Structs.Partition
+					//buscar en que particion esta la particion extendida y guardarla en partExtend
+					if string(mbr.Partitions[0].Type[:]) == "E" {
+						partExtendida = mbr.Partitions[0]
+					} else if string(mbr.Partitions[1].Type[:]) == "E" {
+						partExtendida = mbr.Partitions[1]
+					} else if string(mbr.Partitions[2].Type[:]) == "E" {
+						partExtendida = mbr.Partitions[2]
+					} else if string(mbr.Partitions[3].Type[:]) == "E" {
+						partExtendida = mbr.Partitions[3]
+					}
+
+					//Si existe la extendida
+					if partExtendida.Size != 0{
+						var actual Structs.EBR
+						if err := Herramientas.ReadObject(disco, &actual, int64(partExtendida.Start)); err != nil {
+							return "ERROR FDISK, READ "+ err.Error()
+						}
+
+						//Evaluar si es la primera
+						if Structs.GetName(string(actual.Name[:])) == name {
+							reducir = false
+						} else {
+							for actual.Next != -1 {
+								//actual = actual.next
+								if err := Herramientas.ReadObject(disco, &actual, int64(actual.Next)); err != nil {
+									return "ERROR FDISK, READ "+ err.Error()
+								}
+								if Structs.GetName(string(actual.Name[:])) == name {
+									reducir = false
+									break
+								}
+							}
+						}
+
+						if !reducir {
+							actual.Size += int32(add)
+							if actual.Size > 0 {
+								if err := Herramientas.WriteObject(disco, actual, int64(actual.Start)); err != nil { //Sobre escribir el ebr
+									return "ERROR FDISK, write "+ err.Error()
+								}
+								fmt.Println("Particion con nombre ", name, " se redujo correctamente")
+								return "Particion con nombre "+ name+ " se redujo correctamente"
+							} else {
+								fmt.Println("FDISK Error. El tamaño que intenta eliminar es demasiado grande")
+								return "FDISK Error. El tamaño que intenta eliminar es demasiado grande"
+							}
+						}
+					}
+				}
+
+				if reducir {
+					fmt.Println("FDISK Error. No existe la particion a reducir")
+					return "FDISK Error. No existe la particion a reducir"
+				}
+			//Fin reducir espacio
+			}else if add > 0{
+				fmt.Println("aumentar espacio")
+				//Primarias y/o extendida
+				evaluar := 0
+				//---------------------  Si el aumento es en particion 1 ---------------------
+				if Structs.GetName(string(mbr.Partitions[0].Name[:])) == name{
+					if mbr.Partitions[1].Start == 0 {
+						if mbr.Partitions[2].Start == 0 {
+							if mbr.Partitions[3].Start == 0 {
+								evaluar = int(mbr.MbrSize - mbr.Partitions[0].GetEnd())
+							} else {
+								evaluar = int(mbr.Partitions[3].Start - mbr.Partitions[0].GetEnd())
+							}
+						} else {
+							evaluar = int(mbr.Partitions[2].Start - mbr.Partitions[0].GetEnd())
+						}
+					} else {
+						evaluar = int(mbr.Partitions[1].Start - mbr.Partitions[0].GetEnd())
+					}
+
+					//evaluar > 0 -> si hay espacio para aumentar. add <= evaluar -> si lo que quiero aumentar cabe en el espacio disponible
+					if evaluar > 0 && add <= evaluar {
+						//aumenta el tamaño de 1
+						mbr.Partitions[0].Size += int32(add)
+						if err := Herramientas.WriteObject(disco, mbr, 0); err != nil { //Sobre escribir el mbr
+							return "ERROR FDISK, write "+ err.Error()
+						}
+						fmt.Println("Particion con nombre ", name, " aumento el espacio correctamente")
+						return "Particion con nombre "+ name+ " aumento el espacio correctamente"
+					} else {
+						fmt.Println("FDISK Error. El tamaño que intenta aumentar es demasiado grande para la particion ", name)
+						return "FDISK Error. El tamaño que intenta aumentar es demasiado grande para la particion " + name
+					}
+				//---------------------  Si el aumento es en particion 2 ---------------------
+				}else if Structs.GetName(string(mbr.Partitions[1].Name[:])) == name{
+					if mbr.Partitions[2].Start == 0 {
+						if mbr.Partitions[3].Start == 0 {
+							evaluar = int(mbr.MbrSize - mbr.Partitions[1].GetEnd())
+						} else {
+							evaluar = int(mbr.Partitions[3].Start - mbr.Partitions[1].GetEnd())
+						}
+					} else {
+						evaluar = int(mbr.Partitions[2].Start - mbr.Partitions[1].GetEnd())
+					}
+					//aumenta el tamaño de 2
+					if evaluar > 0 && add <= evaluar {
+						mbr.Partitions[1].Size += int32(add)
+						if err := Herramientas.WriteObject(disco, mbr, 0); err != nil { //Sobre escribir el mbr
+							return "ERROR FDISK WRITE "+err.Error()
+						}
+						fmt.Println("Particion con nombre ", name, " aumento el espacio correctamente")
+						return "Particion con nombre "+ name+ " aumento el espacio correctamente"
+					} else {
+						fmt.Println("FDISK Error. El tamaño que intenta aumentar es demasiado grande para la particion ", name)
+						return "FDISK Error. El tamaño que intenta aumentar es demasiado grande para la particion " + name
+					}
+				//---------------------  Si el aumento es en particion 3 ---------------------
+				}else if Structs.GetName(string(mbr.Partitions[2].Name[:])) == name{
+					if mbr.Partitions[3].Start == 0 {
+						evaluar = int(mbr.MbrSize - mbr.Partitions[2].GetEnd())
+					} else {
+						evaluar = int(mbr.Partitions[3].Start - mbr.Partitions[2].GetEnd())
+					}
+					//aumenta el tamaño de 3
+					if evaluar > 0 && add <= evaluar {
+						mbr.Partitions[2].Size += int32(add)
+						if err := Herramientas.WriteObject(disco, mbr, 0); err != nil { //Sobre escribir el mbr
+							return "ERROR FDISK WRITE "+err.Error()
+						}
+						fmt.Println("Particion con nombre ", name, " aumento el espacio correctamente")
+						return "Particion con nombre " + name+ " aumento el espacio correctamente"
+					} else {
+						fmt.Println("FDISK Error. El tamaño que intenta aumentar es demasiado grande para la particion ", name)
+						return "FDISK Error. El tamaño que intenta aumentar es demasiado grande para la particion "+name
+					}
+				//---------------------  Si el aumento es en particion 4 ---------------------
+				}else if Structs.GetName(string(mbr.Partitions[3].Name[:])) == name{
+					evaluar = int(mbr.MbrSize - mbr.Partitions[3].GetEnd())
+					//aumenta el tamaño de 4
+					if evaluar > 0 && add <= evaluar {
+						mbr.Partitions[3].Size += int32(add)
+						if err := Herramientas.WriteObject(disco, mbr, 0); err != nil { //Sobre escribir el mbr
+							return "ERROR FDISK, WRITE "+err.Error()
+						}
+						fmt.Println("Particion con nombre ", name, " aumento el espacio correctamente")
+						return "Particion con nombre "+ name+ " aumento el espacio correctamente"
+					} else {
+						fmt.Println("FDISK Error. El tamaño que intenta aumentar es demasiado grande para la particion ", name)
+						return "FDISK Error. El tamaño que intenta aumentar es demasiado grande para la particion "+ name
+					}		
+				//---------------------  Si el aumento logicas ---------------------			
+				}else{
+					//Aumentar logica
+					var partExtendida Structs.Partition
+					//buscar en que particion esta la particion extendida y guardarla en partExtend
+					if string(mbr.Partitions[0].Type[:]) == "E" {
+						partExtendida = mbr.Partitions[0]
+					} else if string(mbr.Partitions[1].Type[:]) == "E" {
+						partExtendida = mbr.Partitions[1]
+					} else if string(mbr.Partitions[2].Type[:]) == "E" {
+						partExtendida = mbr.Partitions[2]
+					} else if string(mbr.Partitions[3].Type[:]) == "E" {
+						partExtendida = mbr.Partitions[3]
+					}
+
+					fmt.Println(partExtendida)
+				}
+			} else {
+				fmt.Println("FDISK Error. 0 no es un valor valido para aumentar o disminuir particiones")
+				return "FDISK Error. 0 no es un valor valido para aumentar o disminuir particiones"
+			}
+
+
+		// ==========================================================================================
+		// ======================================== ELIMINAR ========================================
+		// ==========================================================================================
 		}else if opcion == 2 {
 			fmt.Println("ELIMINAR")		
-		}// ============================== FIN ELIMINAR ==============================
+		}//  FIN ELIMINAR 
 	}//fin valido
 
 	
