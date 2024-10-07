@@ -89,18 +89,18 @@ func Mkdir(entrada []string) string{
 
 		//Validar que exista la ruta
 		stepPath := strings.Split(path, "/")
-			idInicial := int32(0)
-			idActual := int32(0)
-			crear := -1
-			for i, itemPath := range stepPath[1:] {
-				idActual = ToolsInodos.BuscarInodo(idInicial, "/"+itemPath, superBloque, Disco)
-				if idInicial != idActual {
-					idInicial = idActual
-				} else {
-					crear = i + 1 //porque estoy iniciando desde 1 e i inicia en 0
-					break
-				}
+		idInicial := int32(0)
+		idActual := int32(0)
+		crear := -1
+		for i, itemPath := range stepPath[1:] {
+			idActual = ToolsInodos.BuscarInodo(idInicial, "/"+itemPath, superBloque, Disco)
+			if idInicial != idActual {
+				idInicial = idActual
+			} else {
+				crear = i + 1 //porque estoy iniciando desde 1 e i inicia en 0
+				break
 			}
+		}
 
 		//crear carpetas padre si se tiene permiso
 		if crear != -1 {

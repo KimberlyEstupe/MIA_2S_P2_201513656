@@ -928,7 +928,7 @@ func tree(path string, id string) string{
 		carpeta := filepath.Dir(path)//DIr es para obtener el directorio
 		rutaReporte := carpeta + "/" + nombre + ".txt"
 		Herramientas.Reporte(rutaReporte, cad)
-		respuesta += "Reporte BM Inode " + nombre +" creado \n"
+		respuesta += "Reporte tree " + nombre +" creado \n"
 		respuesta += " Pertenece al disco: " + nombreDisco
 
 		Herramientas.RepGraphizMBR(rutaReporte, cad, nombre)

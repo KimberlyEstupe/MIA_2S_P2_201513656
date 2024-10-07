@@ -210,6 +210,7 @@ func Analizar(entrada string)string{
 			return "ERROR EN MKFILE, FALTAN PARAMETROS"
 		}
 	
+	//Ejemplo de comando: cat -file1=/home/user/docs/a.txt
 	}else if strings.ToLower(parametros[0])=="cat"{		
 		if len(parametros)>1{			
 			return AP.Cat(parametros)
@@ -225,6 +226,14 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN MKDIR, FALTAN PARAMETROS")
 			return "ERROR EN MKDIR, FALTAN PARAMETROS"
 		}
+	
+	}else if strings.ToLower(parametros[0])=="rename"{		
+		if len(parametros)>1{			
+			return AP.Rename(parametros)
+		}else{
+			fmt.Println("ERROR EN RENAME, FALTAN PARAMETROS")
+			return "ERROR EN RENAME, FALTAN PARAMETROS"
+		}
 	// *============================* OTROS *============================*
 	} else if strings.ToLower(parametros[0]) == "rep" {
 		//REP
@@ -238,7 +247,7 @@ func Analizar(entrada string)string{
 		//para agregar lineas con cada enter sin tomarlo como error
 		return ""
 	} else {
-		fmt.Println("Comando no reconocible")
-		return "ERROR: COMANDO NO RECONOCIBLE"
+		fmt.Println("ERROR: COMANDO "+parametros[0]+" NO RECONOCIBLE")
+		return "ERROR: COMANDO "+parametros[0]+" NO RECONOCIBLE"
 	}
 }

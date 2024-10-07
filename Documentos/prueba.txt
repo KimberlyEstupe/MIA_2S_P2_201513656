@@ -10,9 +10,13 @@ mkfs -type=full -id=561A -fs=3fs
 login -user=root -pass=123 -id=561A
 
 mkdir -r -path=/home/archivos/user/docs/usac
-mkfile -path=/home/archivos/user/docs/Tarea.txt -size=75
-mkfile -path=/home/archivos/user/docs/Tarea2.txt -size=768
+mkfile -path=/Tarea1.txt -size=75
+mkfile -path=/home/archivos/user/docs/Tarea2.txt -size=20
 
-rep -id=561A -path=/home/kimberly/Calificacion_MIA/Reportes/p4_r7_ls.jpg" -path_file_ls=/home/archivos/user/docs -name=ls
-rep -id=561A -path=/home/kimberly/Calificacion_MIA/Reportes/j.txt -name=journal
+cat -file1=/Tarea1.txt -file2=/home/archivos/user/docs/Tarea2.txt
 
+rename -path=/Tarea1.txt -name=NuevaTarea1.txt
+rename -path=/home/archivos/user/docs/Tarea2.txt -name=Nueva_Tarea2.txt
+rename -path=/home/archivos -name= Documentos
+
+cat -file1=/NuevaTarea1.txt -file2=/home/archivos/user/docs/Nueva_Tarea2.txt
