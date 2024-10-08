@@ -139,7 +139,7 @@ func Analizar(entrada string)string{
 			return  "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 	// *===================* ADMINISTRACION DE SISTEMA DE ARCHIVOS *======================*
-
+	//ejm: mkfs -type=full -id=341A	-fs=3fs
 	}else if strings.ToLower(parametros[0])=="mkfs"{		
 		if len(parametros)>1{			
 			return SA.MKfs(parametros)
@@ -202,6 +202,7 @@ func Analizar(entrada string)string{
 		}
 	
 	// *=======================* PERMISOS DE CARPETAS Y ARHICVOS *============================*
+	//ejm: 
 	}else if strings.ToLower(parametros[0])=="mkfile"{		
 		if len(parametros)>1{			
 			return AP.MKfile(parametros)
@@ -210,7 +211,7 @@ func Analizar(entrada string)string{
 			return "ERROR EN MKFILE, FALTAN PARAMETROS"
 		}
 	
-	//Ejemplo de comando: cat -file1=/home/user/docs/a.txt
+	//EJ: cat -file1=/home/user/docs/a.txt -file12=/home/user/docs/b.txt
 	}else if strings.ToLower(parametros[0])=="cat"{		
 		if len(parametros)>1{			
 			return AP.Cat(parametros)

@@ -19,4 +19,5 @@ rename -path=/Tarea1.txt -name=NuevaTarea1.txt
 rename -path=/home/archivos/user/docs/Tarea2.txt -name=Nueva_Tarea2.txt
 rename -path=/home/archivos -name= Documentos
 
-cat -file1=/NuevaTarea1.txt -file2=/home/archivos/user/docs/Nueva_Tarea2.txt
+cat -file1=/NuevaTarea1. -file2=/home/Documentos/user/docs/Nueva_Tarea2
+rep -id=561A -Path=/home/kimberly/Calificacion_MIA/Reportes/tree.jpg -name=tree

@@ -74,8 +74,7 @@ func Rename(entrada []string) string {
 		return "CAR ERROR READ FILE " + err.Error() + "\n"
 	}
 
-	// Close bin file
-	defer Disco.Close()
+	
 
 	//Encontrar la particion correcta
 	buscar := false
@@ -149,7 +148,8 @@ func Rename(entrada []string) string {
 						if pathActual == nombre && rename{
 							copy(folderBlock.B_content[k].B_name[:], name)
 							ArchivoEncontrado = false
-							fmt.Println("Nombre cambiado")
+							//Escribir en el archivo los cambios del superBloque
+							Herramientas.WriteObject(Disco, folderBlock, int64(superBloque.S_block_start+(idBlock*int32(binary.Size(Structs.Folderblock{})))))
 						}						
 					}
 				}
@@ -158,7 +158,14 @@ func Rename(entrada []string) string {
 		
 		if ArchivoEncontrado {
 			fmt.Println("Archivo/carpeta no existe")
+			// Close bin file
+			defer Disco.Close()
 			return "ERROR RENAME: EL ARCHIVO O CARPETA EN PATH NO EXISTE"
+		}else{
+			fmt.Println("Archivo/carpeta no existe")
+			// Close bin file
+			defer Disco.Close()
+			return "El nombre del archivo "+name+" fue modificado con exito "			
 		}
 	}
 
