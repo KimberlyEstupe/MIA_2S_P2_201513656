@@ -74,8 +74,6 @@ func Rename(entrada []string) string {
 		return "CAR ERROR READ FILE " + err.Error() + "\n"
 	}
 
-	
-
 	//Encontrar la particion correcta
 	buscar := false
 	part := -1 //particion a utilizar y modificar
@@ -89,7 +87,6 @@ func Rename(entrada []string) string {
 	}
 
 	if buscar{
-		//var contenido string
 		//var fileBlock Structs.Fileblock
 		var superBloque Structs.Superblock
 
@@ -155,17 +152,14 @@ func Rename(entrada []string) string {
 				}
 			}
 		}
-		
+		// Close bin file	
+		defer Disco.Close()
 		if ArchivoEncontrado {
-			fmt.Println("Archivo/carpeta no existe")
-			// Close bin file
-			defer Disco.Close()
+			fmt.Println("Archivo/carpeta no existe")					
 			return "ERROR RENAME: EL ARCHIVO O CARPETA EN PATH NO EXISTE"
 		}else{
-			fmt.Println("Archivo/carpeta no existe")
-			// Close bin file
-			defer Disco.Close()
-			return "El nombre del archivo "+name+" fue modificado con exito "			
+			fmt.Println("Archivo/carpeta no existe")			
+			return "El nombre del archivo fue modificado con exito "			
 		}
 	}
 

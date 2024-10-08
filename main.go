@@ -235,6 +235,14 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN RENAME, FALTAN PARAMETROS")
 			return "ERROR EN RENAME, FALTAN PARAMETROS"
 		}
+	
+		}else if strings.ToLower(parametros[0])=="edit"{		
+			if len(parametros)>1{			
+				return AP.Edit(parametros)
+			}else{
+				fmt.Println("ERROR EN RENAME, FALTAN PARAMETROS")
+				return "ERROR EN RENAME, FALTAN PARAMETROS"
+			}
 	// *============================* OTROS *============================*
 	} else if strings.ToLower(parametros[0]) == "rep" {
 		//REP
