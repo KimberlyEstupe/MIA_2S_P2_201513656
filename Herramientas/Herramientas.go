@@ -51,6 +51,29 @@ func WriteObject(file *os.File, data interface{}, position int64) error {
 	return nil
 }
 
+//Elimina datos de una particion entera
+func DeletePart(file *os.File, position int64, size int32)  error{
+	file.Seek(position, 0) //(posicion, desde donde) -> (5,0) significa a la posicion 5 desde el inicio del archivo
+	err := binary.Write(file, binary.LittleEndian, 0*size)
+	if err != nil {
+		fmt.Println("Err WriteObject==", err)
+		return err
+	}
+	return nil	
+}
+
+// para eliminar en el archivo una particion logica
+func DelPartL(size int32) []byte {
+	datos := make([]byte, size)
+	return datos
+}
+
+// probar la escritura de la particion logica
+func EscribirPartL(size int32) string {
+	cad := strings.Repeat("L", int(size))
+	return cad
+}
+
 // Function to Read an object from a bin file
 func ReadObject(file *os.File, data interface{}, position int64) error {
 	file.Seek(position, 0)
@@ -62,11 +85,6 @@ func ReadObject(file *os.File, data interface{}, position int64) error {
 	return nil
 }
 
-// para eliminar en el archivo una particion logica
-func DelPartL(size int32) []byte {
-	datos := make([]byte, size)
-	return datos
-}
 
 //Elimina caracteres Ilegibles de una cadena de entrada
 func EliminartIlegibles(entrada string) string{
@@ -85,11 +103,6 @@ func EliminartIlegibles(entrada string) string{
 	return salida	
 }
 
-// probar la escritura de la particion logica
-func EscribirPartL(size int32) string {
-	cad := strings.Repeat("L", int(size))
-	return cad
-}
 
 func Reporte(path string, contenido string) error {
 	//asegurar la ruta
