@@ -236,13 +236,21 @@ func Analizar(entrada string)string{
 			return "ERROR EN RENAME, FALTAN PARAMETROS"
 		}
 	
-		}else if strings.ToLower(parametros[0])=="edit"{		
-			if len(parametros)>1{			
-				return AP.Edit(parametros)
-			}else{
-				fmt.Println("ERROR EN RENAME, FALTAN PARAMETROS")
-				return "ERROR EN RENAME, FALTAN PARAMETROS"
-			}
+	}else if strings.ToLower(parametros[0])=="edit"{		
+		if len(parametros)>1{			
+			return AP.Edit(parametros)
+		}else{
+			fmt.Println("ERROR EN EDIT, FALTAN PARAMETROS")
+			return "ERROR EN EDIT, FALTAN PARAMETROS"
+		}
+	
+	}else if strings.ToLower(parametros[0])=="copy"{		
+		if len(parametros)>1{			
+			return AP.Copy(parametros)
+		}else{
+			fmt.Println("ERROR EN COPY, FALTAN PARAMETROS")
+			return "ERROR EN COPY, FALTAN PARAMETROS"
+		}
 	// *============================* OTROS *============================*
 	} else if strings.ToLower(parametros[0]) == "rep" {
 		//REP

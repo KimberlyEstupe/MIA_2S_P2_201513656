@@ -76,7 +76,7 @@ func MKfile(entrada []string) string{
 
 		if parametrosDesconocidos{
 			fmt.Println("MKFILE Error: Parametro desconocido: ", valores[0])
-			respuesta += "MKFILE Error: Parametro desconocido: "+ valores[0]
+			respuesta = "MKFILE Error: Parametro desconocido: "+ valores[0]
 			return respuesta //por si en el camino reconoce algo invalido de una vez se sale
 		}
 	}
@@ -154,7 +154,6 @@ func MKfile(entrada []string) string{
 				fmt.Println("MKDIR ERROR: Carpeta ", stepPath[crear], " no existe. Sin permiso de crear carpetas padre")
 				return "MKFILE ERROR: Carpeta "+ stepPath[crear]+ " no existe. Sin permiso de crear carpetas padre"
 			}
-
 		}
 
 		//verificar que no exista el archivo (recordar que BuscarInodo busca de la forma /nombreBuscar)
