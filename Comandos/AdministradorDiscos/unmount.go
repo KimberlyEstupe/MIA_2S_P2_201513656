@@ -74,8 +74,7 @@ func Unmoun(entrada []string) (string){
 				fmt.Println("Particion con nombre ", name, " desmontada correctamente")					
 					break //para que ya no siga recorriendo si ya encontro la particion independientemente si se pudo o no reducir
 				}
-			}
-			
+			}			
 
 			//elimina el la particion montada del struck
 			Structs.Montadas = append(Structs.Montadas[:registro], Structs.Montadas[registro+1:]...)

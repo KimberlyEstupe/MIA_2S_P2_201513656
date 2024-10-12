@@ -595,7 +595,29 @@ func Fdisk(entrada []string) string{
 		// ======================================== ELIMINAR ========================================
 		// ==========================================================================================
 		}else if opcion == 2 {
-			fmt.Println("ELIMINAR")		
+			//-------- primarias o extendida-----------------------------------------------------
+			del := true //para saber si se elimino la particion (true es que no se elimino, esto para facilitar el if que valida esta varible)
+			for i := 0; i < 4; i++ {
+				nombre := Structs.GetName(string(mbr.Partitions[i].Name[:]))
+				if nombre == name {
+					if delete == 1{// Elimina full
+						Herramientas.DeletePart(disco, int64(mbr.Partitions[i].Start), mbr.Partitions[i].Size)
+					}
+					var newPart Structs.Partition
+					mbr.Partitions[i] = newPart
+					if err := Herramientas.WriteObject(disco, mbr, 0); err != nil { //Sobre escribir el mbr
+						return "ERROR FDISK WRITE " + err.Error()
+					}
+					del = false
+					fmt.Println("particion con nombre ", name, " eliminada")
+					return "particion con nombre "+ name+ " eliminada"
+				}
+			}
+
+			// -------------------------- Particiones LOgicas--------------------------------
+			if del{
+				fmt.Println("Eliminar particiones logicas")
+			}
 		}else {
 			fmt.Println("ERROR FDISK. Operación desconocida (operaciones aceptadas: crear, modificar o eliminar)")
 			return "ERROR FDISK. Operación desconocida (operaciones aceptadas: crear, modificar o eliminar)"
@@ -605,9 +627,6 @@ func Fdisk(entrada []string) string{
 		defer disco.Close()
 	}//fin valido
 
-	
-	
-	fmt.Println(delete,add)
 	return respuesta
 }
 

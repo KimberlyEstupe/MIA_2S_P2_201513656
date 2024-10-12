@@ -48,31 +48,31 @@ func Rep(entrada []string) string{
 	if Valido{
 		if name != "" && id != "" && path != "" {			
 			switch name{
-			case "mbr":
+			case "mbr"://rep -id=561A -path=Calificacion_MIA/reports/reporte1.jpg -name=mbr
 				fmt.Println("reporte mbr")
 				respuesta+= Rmbr(path, id)
-			case "disk":
+			case "disk"://rep -id=561A -path=Calificacion_MIA/reports/report2.pdf -name=disk
 				fmt.Println("reporte disk")
 				respuesta+= disk(path, id)
-			case "bm_inode":
+			case "bm_inode"://rep -id=561A -path=Calificacion_MIA/reports/report5.txt -name=bm_inode
 				fmt.Println("reporte bm_inode")
 				respuesta += BM_inode(path, id)
-			case "bm_block":
+			case "bm_block"://rep -id=561A -path=Calificacion_MIA/reports/report6.txt -name=bm_block
 				fmt.Println("reporte bm_block")
 				respuesta += BM_Bloque(path, id)
-			case "sb":
+			case "sb"://rep -id=561A -path=Calificacion_MIA/reports/report8.jpg -name=sb
 				fmt.Println("reporte sb")
 				respuesta += superBloque(path, id)
-			case "file":
+			case "file"://rep -id=561A -path=Calificacion_MIA/reports/report9.txt -path_file_ls=/users.txt -name=file
 				fmt.Println("reporte file")
 				respuesta += FILE(path, id, rutaFile)
-			case "ls":
+			case "ls":// rep -id=561A -path=Calificacion_MIA/reports/report10.jpg -path_file_ls=/ -name=ls
 				respuesta += LS(path, id, rutaFile)
 				fmt.Println("reporte ls")
-			case "journal":
+			case "journal"://rep -id=561A -path=Calificacion_MIA/reports/reportJournal.pdf -name=journal
 				journal(path, id)
 				fmt.Println("reporte journal")
-			case "tree":
+			case "tree"://rep -id=561A -path=Calificacion_MIA/reports/tree.pdf -name=tree
 				tree(path,id)
 				fmt.Println("reporte tree")
 			default:
@@ -819,7 +819,7 @@ func journal(path string, id string) string{
 
 		//reporte requerido
 		carpeta := filepath.Dir(path)//DIr es para obtener el directorio
-		rutaReporte := carpeta + "/" + nombre + ".txt"
+		rutaReporte := carpeta + "/" + nombre + ".dot"
 		Herramientas.Reporte(rutaReporte, cad)
 		respuesta += "Reporte BM Inode " + nombre +" creado \n"
 		respuesta += " Pertenece al disco: " + nombreDisco
@@ -926,7 +926,7 @@ func tree(path string, id string) string{
 
 		//reporte requerido
 		carpeta := filepath.Dir(path)//DIr es para obtener el directorio
-		rutaReporte := carpeta + "/" + nombre + ".txt"
+		rutaReporte := carpeta + "/" + nombre + ".dot"
 		Herramientas.Reporte(rutaReporte, cad)
 		respuesta += "Reporte tree " + nombre +" creado \n"
 		respuesta += " Pertenece al disco: " + nombreDisco

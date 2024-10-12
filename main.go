@@ -99,6 +99,8 @@ func Analizar(entrada string)string{
 	parametros:= strings.Split(tmp, " -")
 
 	// *============================* ADMINISTRACION DE DISCOS *============================*
+	//mkdisk -size=5 -unit=M -path=Calificacion_MIA/Discos/Disco1.mia
+	//mkdisk -size=5 -unit=M -path="Calificacion_MIA/Discos/Disco_1.mia"
 	if strings.ToLower(parametros[0])=="mkdisk"{
 		if len(parametros)>1{	
 			AD.Mkdisk(parametros)				
@@ -107,6 +109,8 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK")
 			return "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
+
+	//rmdisk -path="/home/mis discos/Disco4.mia"
 	}else if strings.ToLower(parametros[0])=="rmdisk"{
 		if len(parametros)>1{	
 			return AD.Rmdisk(parametros)		
@@ -115,6 +119,8 @@ func Analizar(entrada string)string{
 			return  "ERROR EN RMDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 
+	//fdisk -type=P -unit=b -name=Part1 -size=10485760 -path=Calificacion_MIA/Discos/Disco1.mia
+	//fdisk -add=-23760 -path=Calificacion_MIA/Discos/Disco1.mia -name=Part1 -size=10485760
 	}else if strings.ToLower(parametros[0])=="fdisk"{
 		if len(parametros)>1{	
 			return AD.Fdisk(parametros)		
@@ -123,6 +129,7 @@ func Analizar(entrada string)string{
 			return  "ERROR EN FDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 
+	//mount -path=/home/Disco3.mia -name=Part1
 	}else if strings.ToLower(parametros[0])=="mount"{
 		if len(parametros)>1{	
 			return AD.Mount(parametros)			
@@ -131,6 +138,7 @@ func Analizar(entrada string)string{
 			return "ERROR EN MKDISK, FALTAN PARAMETROS EN MKDISK"
 		}
 
+	//unmount -id=561A
 	}else if strings.ToLower(parametros[0])=="unmount"{
 		if len(parametros)>1{	
 			return AD.Unmoun(parametros)		
@@ -149,7 +157,7 @@ func Analizar(entrada string)string{
 		}
 	
 	// *===================* ADMINISTRACION DE USUARIOS Y CARPETAS *======================*
-
+	//login -user=root -pass=123 -id=561A
 	}else if strings.ToLower(parametros[0])=="login"{		
 		if len(parametros)>1{			
 			return USR.Login(parametros)
@@ -157,10 +165,12 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN LOGIN, FALTAN PARAMETROS")
 			return "ERROR EN LOGIN, FALTAN PARAMETROS"
 		}
-	
+
+	//logout
 	}else if strings.ToLower(parametros[0])=="logout"{		
 		return USR.Logout()
-		
+	
+	//mkgrp -name=usuarios
 	}else if strings.ToLower(parametros[0])=="mkgrp"{		
 		if len(parametros)>1{			
 			return USR.Mkgrp(parametros)
@@ -169,6 +179,7 @@ func Analizar(entrada string)string{
 			return "ERROR EN MKGRP, FALTAN PARAMETROS"
 		}
 		
+	//rmgrp -name=usuarios
 	}else if strings.ToLower(parametros[0])=="rmgrp"{		
 		if len(parametros)>1{			
 			return USR.Rmgrp(parametros)
@@ -202,7 +213,7 @@ func Analizar(entrada string)string{
 		}
 	
 	// *=======================* PERMISOS DE CARPETAS Y ARHICVOS *============================*
-	//ejm: 
+	//mkfile -path=/home/archivos/docs/Tarea2.txt -size=75 -r
 	}else if strings.ToLower(parametros[0])=="mkfile"{		
 		if len(parametros)>1{			
 			return AP.MKfile(parametros)
@@ -219,7 +230,8 @@ func Analizar(entrada string)string{
 			fmt.Println("ERROR EN CAT, FALTAN PARAMETROS")
 			return "ERROR EN CAT, FALTAN PARAMETROS"
 		}
-	
+
+	//mkdir -r -path=/home/archivos/Fotos
 	}else if strings.ToLower(parametros[0])=="mkdir"{		
 		if len(parametros)>1{			
 			return AP.Mkdir(parametros)

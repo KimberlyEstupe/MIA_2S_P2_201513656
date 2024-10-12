@@ -1,0 +1,22 @@
+Mkdisk -size=50 -unit=M -fit=FF -path=Calificacion_MIA/Discos/Disco1.mia
+fdisk -type=P -unit=b -name=Part1 -size=10485760 -path=Calificacion_MIA/Discos/Disco1.mia
+fdisk -type=E -unit=b -name=Part2 -size=10485760 -path=Calificacion_MIA/Discos/Disco1.mia
+fdisk -type=P -unit=b -name=Part3 -size=10485760 -path=Calificacion_MIA/Discos/Disco1.mia
+
+fdisk -type=L -unit=b -name=PartL1 -size=1048 -path=Calificacion_MIA/Discos/Disco1.mia
+fdisk -type=L -unit=b -name=PartL2 -size=1048 -path=Calificacion_MIA/Discos/Disco1.mia
+fdisk -type=L -unit=b -name=PartL3 -size=1048 -path=Calificacion_MIA/Discos/Disco1.mia
+
+fdisk -type=P -unit=b -name=Part4 -size=10485760 -path=Calificacion_MIA/Discos/Disco1.mia
+
+fdisk -add=-23760 -unit=b -path=Calificacion_MIA/Discos/Disco1.mia -name=Part1 -size=10485760
+fdisk -add=514240 -unit=b -path=Calificacion_MIA/Discos/Disco1.mia -name=Part4 -size=10485760
+
+
+mount -path=Calificacion_MIA/Discos/Disco1.mia -name=Part4
+mkfs -type=full -id=561A
+login -user=root -pass=123 -id=561A
+
+
+fdisk -path=Calificacion_MIA/Discos/Disco1.mia -name=Part4 -size=10485760 -delete=full
+rep -id=561A -path=Calificacion_MIA/reports/mbr1.jpg -name=mbr

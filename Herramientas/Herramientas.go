@@ -53,8 +53,9 @@ func WriteObject(file *os.File, data interface{}, position int64) error {
 
 //Elimina datos de una particion entera
 func DeletePart(file *os.File, position int64, size int32)  error{
+	zeros := make([]byte, size)
 	file.Seek(position, 0) //(posicion, desde donde) -> (5,0) significa a la posicion 5 desde el inicio del archivo
-	err := binary.Write(file, binary.LittleEndian, 0*size)
+	err := binary.Write(file, binary.LittleEndian, zeros)
 	if err != nil {
 		fmt.Println("Err WriteObject==", err)
 		return err
