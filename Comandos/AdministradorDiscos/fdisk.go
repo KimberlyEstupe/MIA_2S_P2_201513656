@@ -616,8 +616,140 @@ func Fdisk(entrada []string) string{
 
 			// -------------------------- Particiones LOgicas--------------------------------
 			if del{
-				fmt.Println("Eliminar particiones logicas")
+				var partExtendida Structs.Partition
+				//buscar en que particion esta la particion extendida y guardarla en partExtend
+				if string(mbr.Partitions[0].Type[:]) == "E" {
+					partExtendida = mbr.Partitions[0]
+				} else if string(mbr.Partitions[1].Type[:]) == "E" {
+					partExtendida = mbr.Partitions[1]
+				} else if string(mbr.Partitions[2].Type[:]) == "E" {
+					partExtendida = mbr.Partitions[2]
+				} else if string(mbr.Partitions[3].Type[:]) == "E" {
+					partExtendida = mbr.Partitions[3]
+				}
+				
+				//Si existe la extendida
+				if partExtendida.Size != 0 {
+					var actual Structs.EBR
+					if err := Herramientas.ReadObject(disco, &actual, int64(partExtendida.Start)); err != nil {
+						return "ERROR FDISK READ EBR "+err.Error()
+					}
+					var anterior Structs.EBR
+					var eliminar Structs.EBR //para eliminar el nombre de la primera particion con el valor de un EBR sin valores
+
+					//Evaluar la primer EBR
+					if Structs.GetName(string(actual.Name[:])) == name {
+						del = false
+					} else {
+						for actual.Next != -1 {
+							//anterior = actual
+							if err := Herramientas.ReadObject(disco, &anterior, int64(actual.Start)); err != nil {
+								return "ERROR FDISK READ EBR "+err.Error()
+							}
+							//actual = actual.next
+							if err := Herramientas.ReadObject(disco, &actual, int64(actual.Next)); err != nil {
+								return "ERROR FDISK READ EBR "+err.Error()
+							}
+							//evalua la actual
+							if Structs.GetName(string(actual.Name[:])) == name {
+								del = false
+								break
+							}
+						}
+					}
+
+					//Eliminar la particion encontrada (si se encontro)
+					if !del {
+						//Cargar el tamaño de la estructura del ebr para eliminar el ebr junto al contenido de la particion (la particion ocupa el ebr + tamaño de la particion)
+						sizeEBR := int32(binary.Size(actual))
+						//si tiene una particion siguiente
+						if actual.Next != -1 {
+							if anterior.Size == 0 {
+								//Si la anterior no existe estoy en la primera
+								if delete == 1{
+									//Eliminar el contenido de la particion
+									if err := Herramientas.WriteObject(disco, Herramientas.DelPartL(actual.Size), int64(actual.Start+sizeEBR)); err != nil {
+										return "ERROR FDISK ESCRITURA DE EBR "+err.Error()
+									}
+								}
+								
+								actual.Size = 0             //con size = 0 indico que no existe, los demas valores los dejo para conservar las que vienen despues
+								actual.Name = eliminar.Name // para que cuando elimine tampoco encuentre este nombre (elimine bien)
+								
+								if err := Herramientas.WriteObject(disco, actual, int64(actual.Start)); err != nil {
+									return "ERROR FDISK ESCRITURA DE EBR "+err.Error()
+								}
+								//Al ser la primera particion debo dejar el ebr escrito en el archivo del disco
+																	
+								fmt.Println("particion con nombre ", name, " eliminada")
+								return "Particion con nombre "+ name+ " eliminada"
+							}else{
+								//En medio (Esta despues de la primera pero antes de la ultima. Tiene anterior y siguiente)
+								if delete == 1 {
+									//Eliminar el contenido de la particion
+									if err := Herramientas.WriteObject(disco, Herramientas.DelPartL(actual.Size+sizeEBR), int64(actual.Start)); err != nil {
+										return "ERROR FDISK ESCRITURA DE EBR "+err.Error()
+									}
+								}
+								//Guardo en el disco (el anterior al que voy a eliminar ahora apunta al siguiente del que voy a eliminar)
+								anterior.Next = actual.Next
+								actual.Size = 0
+								actual.Name = eliminar.Name 
+								if err := Herramientas.WriteObject(disco, anterior, int64(anterior.Start)); err != nil {
+									return "ERROR FDISK ESCRITURA DE EBR "+err.Error()
+								}
+								fmt.Println("particion con nombre ", name, " eliminada")
+								return "Particion con nombre "+ name+ " eliminada"
+							}
+						}else{
+							//No tiene siguiente
+							if anterior.Size == 0 {
+								//Es la primera porque no tiene anterior. Ademas si esta en este bloque es porque no tiene siguiente tampoco
+								if delete == 1{
+									//Eliminar el contenido de la particion
+									if err := Herramientas.WriteObject(disco, Herramientas.DelPartL(actual.Size), int64(actual.Start+sizeEBR)); err != nil {
+										return "ERROR FDISK ESCRITURA DE EBR "+err.Error()
+									}
+								}
+								actual.Size = 0
+								actual.Name = eliminar.Name
+								fmt.Println("Nombre cambiado ", Structs.GetName(string(actual.Name[:])))
+								if err := Herramientas.WriteObject(disco, actual, int64(actual.Start)); err != nil {
+									return "ERROR FDISK ESCRITURA DE EBR "+err.Error()
+								}
+								//Al ser la primera no debo eliminar el ebr del disco
+								fmt.Println("Particion con nombre ", name, " eliminada")
+							}else{
+								//Ultima particion (No tiene un siguiente pero si un anterior) (actual es la que se esta eliminando)
+								anterior.Next = -1
+								if err := Herramientas.WriteObject(disco, anterior, int64(anterior.Start)); err != nil {
+									return "ERROR FDISK ESCRITURA DE EBR "+err.Error()
+								}
+
+								if delete == 1{
+									//Eliminar el contenido de la particion
+									if err := Herramientas.WriteObject(disco, Herramientas.DelPartL(actual.Size+sizeEBR), int64(actual.Start)); err != nil {
+										return "ERROR FDISK ESCRITURA DE EBR "+err.Error()
+									}
+								}
+								
+								fmt.Println("particion con nombre ", name, " eliminada")
+								return "Particion con nombre "+ name+ " eliminada"
+							}
+						}
+					}
+				}else {
+					fmt.Println("FDISK Error. No se encuentra la particion de tipo logica debido a que no existe una particion extendida: ", name)
+					return "ERROR FDISK. No se encontro la particion de nombre "+name
+				}
 			}
+
+			//Valido si no se elimino nada para reportar el error
+			if del {
+				fmt.Println("FDISK Error. No se encontro la particion a eliminar")
+				return "ERROR FDISK. No se encontro la particion de nombre "+name
+			}
+
 		}else {
 			fmt.Println("ERROR FDISK. Operación desconocida (operaciones aceptadas: crear, modificar o eliminar)")
 			return "ERROR FDISK. Operación desconocida (operaciones aceptadas: crear, modificar o eliminar)"
@@ -1100,6 +1232,7 @@ func primerAjusteLogicas(disco *os.File, partExtend Structs.Partition, sizeNewPa
 				if err := Herramientas.WriteObject(disco, actual, int64(actual.Start)); err != nil {
 					return "ERROR FDISK Write " +err.Error()+ "\n"
 				}
+
 				fmt.Println("Particion con nombre ", name, " creada correctamente")
 				respuesta += "Particion con nombre "+ name +" creada correctamente"+ "\n"
 			} else {

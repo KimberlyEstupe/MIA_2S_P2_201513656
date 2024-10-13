@@ -70,9 +70,16 @@ func DelPartL(size int32) []byte {
 }
 
 // probar la escritura de la particion logica
-func EscribirPartL(size int32) string {
-	cad := strings.Repeat("L", int(size))
-	return cad
+func EscribirPartL(file *os.File, data string, position int64) error {
+	// Convertir cadena a bytes
+    dataBytes := []byte(data)
+	file.Seek(position, 0) //(posicion, desde donde) -> (5,0) significa a la posicion 5 desde el inicio del archivo
+	err := binary.Write(file, binary.LittleEndian, dataBytes)	
+	if err != nil {
+		fmt.Println("Err WriteObject==", err)
+		return err
+	}
+	return nil
 }
 
 // Function to Read an object from a bin file
@@ -162,3 +169,4 @@ func RepGraphizMBR(path string, contenido string, nombre string) error {
 
 	return err
 }
+
