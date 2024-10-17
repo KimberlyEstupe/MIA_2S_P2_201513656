@@ -1,22 +1,13 @@
-body{
-    background: rgb(2,0,36);
-    background: linear-gradient(356deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 31%, rgba(0,212,255,1) 88%); 
 
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
 
 /*Ordenado de afuera hacia adentro*/
 p{    
-    margin: 25px 0px 0px 0px; /*Arriba derecha abajo izquierda*/
-    border: 0;
-    padding: 0;
+    margin: 35px 0px 0px 0px; /*Arriba derecha abajo izquierda*/
+    
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
-    color: rgb(2, 3, 56);
-    font-size: 14px;
-    
+    color: rgb(7, 7, 7);
+    font-size: 14px;   
 }
 
 .entrada{
@@ -24,20 +15,20 @@ p{
     width: 850px;  /*ancho*/
     resize: none;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: small;
-
+    font-size: small;    
 }
 
 .salida{
-    height: 250px; /*alto*/ 
+    height: 220px; /*alto*/ 
     width: 850px;  /*ancho*/
     resize: none;
     font-family: Arial, Helvetica, sans-serif;
     font-size: small;
+    
 }
 
 .contenedorEjecutar{
-    padding-top: 10px;
+    padding-top: 0px;
     padding-bottom: 10px;
     padding-left: 5px;
     padding-right: 5px;
@@ -61,3 +52,14 @@ button{
     align-items: center;
 }
 
+.cuadrado {
+    width: 100px; /* Tamaño del cuadrado */
+    height: 30px; /* Tamaño del cuadrado */
+    border-radius: 10px; /* Redondea los bordes del cuadrado */
+    background-color: #b1b6bd; /* Color de fondo del cuadrado */
+    text-align: center; /* Centra la letra horizontalmente */
+    line-height: 30px; /* Centra la letra verticalmente */
+    font-size: 13px; /* Tamaño de la letra */
+    font-weight: bold; /* Peso de la letra */
+
+ }

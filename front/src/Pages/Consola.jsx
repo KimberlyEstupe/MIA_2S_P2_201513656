@@ -23,7 +23,7 @@ export default function Comandos({newIp="localhost"}){
         };
         
         try {
-            const response = await fetch(`http://localhost:8080/analizar`, {
+            const response = await fetch(`http://${newIp}:8080/analizar`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -67,7 +67,9 @@ export default function Comandos({newIp="localhost"}){
         <div className='contenedorEjecutar'>
             <div className="col">
                 <div className="entrada">
-                    <p><strong>ENTRADA</strong></p>
+                <div class="circle">                                    
+                        <strong><p>ENTRADA</p></strong>
+                    </div>  
                     <textarea
                         className='entrada'
                         value={textValue}
@@ -76,8 +78,10 @@ export default function Comandos({newIp="localhost"}){
                         id='inputComands'
                     />
                 </div>
-                <div className="salida">
-                    <strong><p>SALIDA1</p></strong>
+                <div className="salida">                    
+                    <div class="circle">                                    
+                        <strong><p>SALIDA</p></strong>
+                    </div>
                     <textarea
                         className='salida'
                         value={textExit}

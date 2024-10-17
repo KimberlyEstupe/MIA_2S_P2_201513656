@@ -1,9 +1,17 @@
 #mkdisk
 Mkdisk -size=50 -unit=M -fit=FF -path=Calificacion_MIA/Discos/Disco1.mia
+Mkdisk -size=50 -unit=M -fit=FF -path=Calificacion_MIA/Discos/Disco2.mia
+Mkdisk -size=50 -unit=M -fit=FF -path=Calificacion_MIA/Discos/Disco3.mia
 fdisk -type=P -unit=b -name=Part11 -size=10485760 -path=Calificacion_MIA/Discos/Disco1.mia -fit=BF
+fdisk -type=P -unit=b -name=Part1 -size=10485760 -path=Calificacion_MIA/Discos/Disco1.mia
+fdisk -type=E -unit=b -name=Part2 -size=10485760 -path=Calificacion_MIA/Discos/Disco1.mia
+fdisk -type=P -unit=b -name=Part3 -size=10485760 -path=Calificacion_MIA/Discos/Disco1.mia
+
 
 # ---- mount -----------------------------
 mount -path=Calificacion_MIA/Discos/Disco1.mia -name=Part11
+mount -path=Calificacion_MIA/Discos/Disco1.mia -name=Part1
+mount -path=Calificacion_MIA/Discos/Disco1.mia -name=Part3
 
 mkfs -type=full -id=561A -fs=3fs
 

@@ -1,12 +1,16 @@
-//import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 
-import Navegador from "./Pages/Consola"
+import Navegador from './Components/navegador';
 
-function App() {
-  return (
-    <Navegador></Navegador>
-  );
+class App extends Component {
+  render() {
+    return (
+      //<div className="App">
+        <Navegador></Navegador>
+      //</div>
+    );
+  }
 }
 
 export default App;

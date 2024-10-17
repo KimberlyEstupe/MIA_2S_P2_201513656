@@ -111,7 +111,7 @@ func Mount(entrada []string) (string){
 								Structs.AddMontadas(id, pathE)
 
 								//TODO modificar la particion que se va a montar								
-								//copy(mbr.Partitions[i].Status[:], "A")
+								copy(mbr.Partitions[i].Status[:], "A")
 								copy(mbr.Partitions[i].Id[:], id)
 								mbr.Partitions[i].Correlative = int32(contador)
 
