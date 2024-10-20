@@ -42,7 +42,7 @@ func main()  {
 	http.HandleFunc("/analizar", getCadenaAnalizar)
 	http.HandleFunc("/discos", getDiscos)
 	http.HandleFunc("/particiones", getParticiones)
-	//http.HandleFunc("/login", login)
+	http.HandleFunc("/login", login)
 	http.HandleFunc("/logout", logout)
 	http.HandleFunc("/explorer", getContenido)
 	http.HandleFunc("/contenido", getContenidoR)
@@ -180,16 +180,18 @@ func Analizar(entrada string)string{
 	// *===================* ADMINISTRACION DE USUARIOS Y CARPETAS *======================*
 	//login -user=root -pass=123 -id=561A
 	}else if strings.ToLower(parametros[0])=="login"{		
-		if len(parametros)>1{			
-			return USR.Login(parametros)
+		if len(parametros)>1{	
+			tmp,_ := USR.Login(parametros)		
+			return tmp
 		}else{
 			fmt.Println("ERROR EN LOGIN, FALTAN PARAMETROS")
 			return "ERROR EN LOGIN, FALTAN PARAMETROS"
 		}
 
 	//logout
-	}else if strings.ToLower(parametros[0])=="logout"{		
-		return USR.Logout()
+	}else if strings.ToLower(parametros[0])=="logout"{
+		str, _ := USR.Logout()	
+		return str
 	
 	//mkgrp -name=usuarios
 	}else if strings.ToLower(parametros[0])=="mkgrp"{		
@@ -381,12 +383,40 @@ func getParticiones(w http.ResponseWriter, r *http.Request) {
 	w.Write(respuestaJSON)
 }
 
+func login(w http.ResponseWriter, r *http.Request) {	
+	// Configurar la cabecera de respuesta
+	w.Header().Set("Content-Type", "application/json")
+
+	var entrada Login
+	if err := json.NewDecoder(r.Body).Decode(&entrada); err != nil {
+		http.Error(w, "Error al decodificar JSON", http.StatusBadRequest)
+		return
+	}
+
+	fmt.Println("\n*********************************************************************************************")
+	fmt.Println("Comando Login desde front ")
+	//Construir cadena para ejecutar el comando login
+	//login -user=root -pass=123 -id=A148
+
+	logear := [4]string{"login", "user=" + entrada.User, "pass=" + entrada.Pass, "id=" + entrada.Id}
+	fmt.Println("logear ", logear)
+	_,tmp:= USR.Login(logear[:])
+
+	respuestaJSON, err := json.Marshal(tmp)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error al serializar datos a JSON: %s", err), http.StatusInternalServerError)
+		return
+	}
+	w.Write(respuestaJSON)
+}
+
 func logout(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("logout")
 	// Configurar la cabecera de respuesta
 	w.Header().Set("Content-Type", "application/json")
+	_,tmp :=USR.Logout()
 
-	respuestaJSON, err := json.Marshal(USR.Logout())
+	respuestaJSON, err := json.Marshal(tmp)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error al serializar datos a JSON: %s", err), http.StatusInternalServerError)
 		return

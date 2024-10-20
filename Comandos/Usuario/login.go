@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Login(entrada []string) string{
+func Login(entrada []string) (string, int){
 	var respuesta string
 	var user string //obligatorio. Nombre 
 	var pass string //obligatorio
@@ -19,7 +19,7 @@ func Login(entrada []string) string{
 
 	if Structs.UsuarioActual.Status {
 		Valido = false
-		return "LOGIN ERROR: Ya existe una sesion iniciada, cierre sesion para iniciar otra"
+		return "LOGIN ERROR: Ya existe una sesion iniciada, cierre sesion para iniciar otra",0
 	}
 
 	for _,parametro :=range entrada[1:]{
@@ -31,7 +31,7 @@ func Login(entrada []string) string{
 			respuesta += "ERROR LOGIN, valor desconocido de parametros " + valores[1]+ "\n"
 			Valido = false
 			//Si falta el valor del parametro actual lo reconoce como error e interrumpe el proceso
-			return respuesta
+			return respuesta, 5
 		}
 
 		//********************  ID *****************
@@ -51,7 +51,7 @@ func Login(entrada []string) string{
 			fmt.Println("LOGIN ERROR: Parametro desconocido: ", valores[0])
 			Valido = false
 			//por si en el camino reconoce algo invalido de una vez se sale
-			return "LOGIN ERROR: Parametro desconocido: "+valores[0] + "\n"
+			return "LOGIN ERROR: Parametro desconocido: "+valores[0] + "\n",5
 		}
 	}
 
@@ -65,36 +65,36 @@ func Login(entrada []string) string{
 		}
 		if pathDico == ""{
 			Valido = false
-			return "ERROR LOGIN: ID NO ENCONTRADO"+ "\n"
+			return "ERROR LOGIN: ID NO ENCONTRADO"+ "\n",5
 		}
 	}else{
 		fmt.Println("LOGIN ERROR: FALTO EL PARAMETRO ID ")
 		Valido = false
-		return "LOGIN ERROR: FALTO EL PARAMETRO ID "+ "\n"
+		return "LOGIN ERROR: FALTO EL PARAMETRO ID "+ "\n",5
 	}
 
 	if pass==""{
 		fmt.Println("LOGIN ERROR: FALTO EL PARAMETRO PASS ")
 		Valido = false
-		return "LOGIN ERROR: FALTO EL PARAMETRO PASS "+ "\n"
+		return "LOGIN ERROR: FALTO EL PARAMETRO PASS "+ "\n",5
 	}
 
 	if user==""{
 		fmt.Println("LOGIN ERROR: FALTO EL PARAMETRO USER ")
 		Valido = false
-		return "LOGIN ERROR: FALTO EL PARAMETRO USER "+ "\n"
+		return "LOGIN ERROR: FALTO EL PARAMETRO USER "+ "\n",5
 	}
 
 	if Valido{
 		file, err := Herramientas.OpenFile(pathDico)
 		if err != nil {
-			return "ERROR REP SB OPEN FILE "+err.Error()+ "\n"
+			return "ERROR LOGIN OPEN FILE "+err.Error()+ "\n",5
 		}
 
 		var mbr Structs.MBR
 		// Read object from bin file
 		if err := Herramientas.ReadObject(file, &mbr, 0); err != nil {
-			return "ERROR REP SB READ FILE "+err.Error()+ "\n"
+			return "ERROR LOGIN READ FILE "+err.Error()+ "\n",5
 		}
 
 		// Close bin file
@@ -114,7 +114,7 @@ func Login(entrada []string) string{
 		errREAD := Herramientas.ReadObject(file, &superBloque, int64(mbr.Partitions[part].Start))
 		if errREAD != nil {
 			fmt.Println("REP Error. Particion sin formato")
-			return "REP Error. Particion sin formato"+ "\n"
+			return "REP Error. Particion sin formato"+ "\n", 1
 		}
 
 		var inodo Structs.Inode		
@@ -153,7 +153,7 @@ func Login(entrada []string) string{
 							Search_IdGrp(linea, Usuario[2])					
 						}else{
 							fmt.Println("ERROR CONTRASEÑA INCORRECTA")
-							return "ERROR LOGIN: LA CONTRASEÑA ES INCORRECTA"
+							return "ERROR LOGIN: LA CONTRASEÑA ES INCORRECTA", 3
 						}
 						break
 					}
@@ -162,16 +162,18 @@ func Login(entrada []string) string{
 		}
 
 		if logeado{
-			respuesta += "EL ususario '"+ user +"' ha iniciado sesion exitosamente! \n"
+			respuesta = "EL ususario '"+ user +"' ha iniciado sesion exitosamente! \n"
 			fmt.Println("IdPart: ", Structs.UsuarioActual.IdPart, " IdGr: ", Structs.UsuarioActual.IdGrp, " User: ", Structs.UsuarioActual.IdUsr, " Nombre: ", Structs.UsuarioActual.Nombre, " Status: ", Structs.UsuarioActual.Status)	
+			return respuesta,-1
 		}else{
 			fmt.Println("ERROR AL INTENTAR INGRESAR, NO SE ENCONTRO EL USUARIO \nPOR FAVOR INGRESE LOS DATOS CORRECTOS")
 			respuesta += "ERROR AL INTENTAR INGRESAR, NO SE ENCONTRO EL USUARIO \n"
 			respuesta+= "POR FAVOR INGRESE LOS DATOS CORRECTOS \n"
+			return respuesta, 4
 		}
 	}
 
-	return respuesta
+	return respuesta,5
 }
 
 func Add_idUsr(id string) string{

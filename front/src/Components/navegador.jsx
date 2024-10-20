@@ -83,7 +83,7 @@ export default function Navegador(){
 
                                 <li className="nav-item">
                                     {/* Enlaza primero a discos porque el flujo es empezar por discos luego particiones y luego el sistema de archivos */}
-                                    <Link className="nav-link" to="/Discos">Explorador</Link>
+                                    <Link className="nav-link" to="/Login">Explorador</Link>
                                 </li>
 
                                 <li className="nav-item">
@@ -97,12 +97,23 @@ export default function Navegador(){
                 
             </nav> 
             
+            {/* 
             <Routes>
-                <Route path="/" element ={<Consola newIp={ip}/>}/> {/*home*/}
+                <Route path="/" element ={<Consola newIp={ip}/>}/> 
                 <Route path="/Consola" element ={<Consola newIp={ip}/>}/> 
                 <Route path="/Discos" element ={<Discos newIp={ip}/>}/> 
                 <Route path="/Disco/:id" element ={<Partitions newIp={ip}/>}/> 
                 <Route path="/Login/:disk/:part" element ={<Login newIp={ip}/>}/>
+                <Route path="/Explorador/:id" element ={<Explorer newIp={ip}/>}/>              
+            </Routes>
+            
+            */}
+            <Routes>
+                <Route path="/" element ={<Consola newIp={ip}/>}/> {/*home*/}
+                <Route path="/Consola" element ={<Consola newIp={ip}/>}/> 
+                <Route path="/Login" element ={<Login newIp={ip}/>}/>
+                <Route path="/Discos/:id" element ={<Discos newIp={ip}/>}/> 
+                
                 <Route path="/Explorador/:id" element ={<Explorer newIp={ip}/>}/>              
             </Routes>
         </HashRouter>

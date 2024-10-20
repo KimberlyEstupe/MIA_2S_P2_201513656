@@ -28,6 +28,12 @@ color: white;
 text-align: center;
 }
 
+.card-body .input-group{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
 .input-group-prepend span{
 width: 50px;
 background-color: rgba(0,0,0,0) !important;

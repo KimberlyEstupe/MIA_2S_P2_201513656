@@ -4,6 +4,7 @@ import { useState } from "react";
 import "../Stylesheets/Login.css"
 import user from '../iconos/profile.png';
 import key from '../iconos/key.png';
+import partDisk from '../iconos/IdPart.png';
 
 export default function Login({newIp="localhost"}){
     const { disk, part } = useParams()
@@ -12,17 +13,17 @@ export default function Login({newIp="localhost"}){
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log("submit", disk, part)
   
         const user = e.target.uname.value
         const pass = e.target.psw.value
+        const id = e.target.particion.value
   
-        console.log("user", user, pass)
+        console.log("user", user, pass, id)
 
         const data = {
             usuario: user,
             password: pass,
-            id: part
+            id: id
         };
 
         fetch(`http://${newIp}:8080/login`, {
@@ -35,14 +36,15 @@ export default function Login({newIp="localhost"}){
             console.log(rawData); 
             setEstado(rawData);
             if (rawData === -1){
-                onClick(part)
+                onClick(id)
             }
         })
     }
 
-    const onClick = (particion) => {
-        console.log("nueva pagina",particion)
-        navigate(`/explorador/${particion}`)
+    const onClick = (id) => {
+        console.log("nueva pagina",id)
+        //navigate(`/explorador/${particion}`)
+        navigate(`/Discos/${id}`)
     }
 
     return(
@@ -55,6 +57,16 @@ export default function Login({newIp="localhost"}){
                         </div>
                         <div className="card-body">
                             <form onSubmit={handleSubmit}>
+
+                                <div className="input-group form-group">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" style={{padding: '0', marginRight:'10px'}}>
+                                            <img src={partDisk} alt="particion" style={{width: '100%', height: '100%'}} />
+                                        </span>
+                                    </div>
+                                    <input type="text" className="form-control" placeholder="ID particion" name="particion" required/>
+                                </div>
+
                                 <div className="input-group form-group">
                                     <div className="input-group-prepend">
                                         <span className="input-group-text" style={{padding: '0', marginRight:'10px'}}>
@@ -64,7 +76,7 @@ export default function Login({newIp="localhost"}){
                                     <input type="text" className="form-control" placeholder="username" name="uname" required/>
                                 </div>
                                 
-                                <div>&nbsp;&nbsp;&nbsp;</div>
+                               
                                 
                                 <div className="input-group form-group">
                                     <div className="input-group-prepend">
@@ -75,7 +87,7 @@ export default function Login({newIp="localhost"}){
                                     <input type="password" className="form-control" placeholder="password" name="psw" required/>
                                 </div>
 
-                                <div>&nbsp;&nbsp;&nbsp;</div>
+                                
                                 
                                 <div style={{textAlign:'center'}}>
                                     <button type="submit" className="btn btn-primary login_btn">Login</button>
@@ -93,6 +105,8 @@ export default function Login({newIp="localhost"}){
                                     <div>Contraseña incorrecta</div>
                                 ):estado === 4 ?(
                                     <div>No se encontro el usuario</div>
+                                ):estado === 5 ?(
+                                    <div>Ocurrio un error inesperado</div>
                                 ):(
                                     <div></div>
                                 )}

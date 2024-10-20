@@ -5,15 +5,17 @@ import (
 	"fmt"
 )
 
-func Logout() string{
+func Logout() (string, int){
 	var respuesta string
+	var res int
 	if Structs.UsuarioActual.Status {
 		Structs.SalirUsuario()
 		fmt.Println("Se ha cerrado la sesion")
 		respuesta += "Se ha cerrado la sesion"
 	}else{
 		respuesta += "ERROR LOGUT: NO HAY SECION INICIADA"
+		res = 1
 	}
 
-	return respuesta
+	return respuesta, res
 }
