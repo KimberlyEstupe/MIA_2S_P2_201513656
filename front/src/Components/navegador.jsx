@@ -27,7 +27,7 @@ export default function Navegador(){
             console.log(rawData);  
             if (rawData === 0){
                 alert('sesion cerrada')
-                window.location.href = '#/Discos';
+                window.location.href = '#/Login';
             }else{
                 alert('No hay sesion abierta')
             }
@@ -113,7 +113,7 @@ export default function Navegador(){
                 <Route path="/Consola" element ={<Consola newIp={ip}/>}/> 
                 <Route path="/Login" element ={<Login newIp={ip}/>}/>
                 <Route path="/Discos/:id" element ={<Discos newIp={ip}/>}/> 
-                
+                <Route path="/Particiones/:id" element ={<Partitions newIp={ip}/>}/> 
                 <Route path="/Explorador/:id" element ={<Explorer newIp={ip}/>}/>              
             </Routes>
         </HashRouter>

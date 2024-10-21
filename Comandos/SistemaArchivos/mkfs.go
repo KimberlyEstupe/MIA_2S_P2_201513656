@@ -484,6 +484,6 @@ func crearEXT3(n int32, particion Structs.Partition, newSuperBloque Structs.Supe
 	//bloque1
 	Herramientas.WriteObject(file, fileBlock1, int64(newSuperBloque.S_block_start+int32(binary.Size(Structs.Fileblock{}))))
 	// Fin crear EXT3
-	fmt.Println("La particion con nombre "+string(particion.Name[:])+" fue formateada con exito con EXT3")
-	return "La particion con nombre "+string(particion.Name[:])+" fue formateada con exito con EXT3"
+	fmt.Println("La particion con nombre "+ string(particion.Name[:])+" fue formateada con exito con EXT3")
+	return "La particion con nombre "+ Herramientas.EliminartIlegibles(string(particion.Name[:])) +" fue formateada con exito con EXT3"
 }

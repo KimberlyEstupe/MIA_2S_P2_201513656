@@ -5,8 +5,9 @@ import partIMG from '../iconos/part.png';
 import "../Stylesheets/Fondo.css"
 
 export default function Partitions({newIp="localhost"}){
-    const { id } = useParams()
+    const { id } = useParams()//Id que viene de Discos
     const [ particiones, setParticiones ] = useState([]);
+    const [ namePart, setNamePart] = useState('');
     const navigate = useNavigate()
     
     useState(()=>{
@@ -16,7 +17,11 @@ export default function Partitions({newIp="localhost"}){
             body: JSON.stringify(id)
         })
         .then(Response => Response.json())
-        .then(rawData => {console.log(rawData); setParticiones(rawData);})
+        .then(rawData => {
+            console.log(rawData); 
+            setParticiones(rawData.Partciones);
+            setNamePart(rawData.IdParticion);
+        })
         .catch(error => {
             console.error('Error en la solicitud Fetch:', error);
             // Maneja el error aquí, como mostrar un mensaje al usuario
@@ -26,13 +31,20 @@ export default function Partitions({newIp="localhost"}){
 
     const onClick = (particion) => {
         console.log("click",particion)
-        navigate(`/login/${id}/${particion}`)
+        console.log("NamePar",namePart)
+        console.log("id",id)
+        if (particion === namePart){
+            navigate(`/Explorador/${id}`) //navegar al objeto que hice click
+        }else{
+            alert('Error No hay sesion iniciada en esta Particion, intente con otra');
+        }  
+        
     }
 
     return(
         <div className='body'>
             <div>&nbsp;&nbsp;&nbsp;</div>
-            <div style={{display:"flex", flexDirection:"row", justifyContent: "center"}}><h1>PARTICIONES EN EL DISCO {id} </h1></div>
+            <div style={{display:"flex", flexDirection:"row", justifyContent: "center"}}><h1>PARTICIONES DEL DISCO </h1></div>
             <div style={{display:"flex", flexDirection:"row", justifyContent: "center"}}>
                 {particiones && particiones.length > 0 ? (
                     particiones.map((particion, index) => {

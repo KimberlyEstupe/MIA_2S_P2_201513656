@@ -36,6 +36,16 @@ type StatusResponse struct {
 	Type    string `json:"type"`
 }
 
+type RespuestaDisk struct{
+	Discos []string//Contiene los Discos de la carpeta
+	DiskPart string//es el id del disco donde de inicio sesion
+}
+
+type RespuestaPart struct{
+	Partciones []string//partciones del Disco donde se incio sesion
+	IdParticion string//id de la particion donde se inicio sesion
+}
+
 func main()  {
 	//EndPoint 
 	//metodos de uso
@@ -305,13 +315,34 @@ func Analizar(entrada string)string{
 }
 
 func getDiscos(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("discos")
+	fmt.Println("\n*********************************************************************************************")
+	fmt.Println("Comando Discos")
+	//struc de respuesta
+	var disk RespuestaDisk
 	// Configurar la cabecera de respuesta
 	w.Header().Set("Content-Type", "application/json")
 
-	directorio := "./Calificacion_MIA/Discos"
-	//lista de discos encontrados
-	var discos []string
+	var entradaId string
+	if err := json.NewDecoder(r.Body).Decode(&entradaId); err != nil {
+		http.Error(w, "Error decodificion JSON", http.StatusBadRequest)
+		return
+	}
+	fmt.Println("entrada, ",entradaId)
+
+	var pathDico string
+	//BUsca en struck de particiones montadas el id ingresado
+	for _,montado := range Structs.Montadas{
+		if montado.Id == entradaId{
+			pathDico = montado.PathM			
+		}
+	}
+
+	directorio := filepath.Dir(pathDico)
+	tmp := strings.Split(pathDico, "/")
+	nombre := tmp[len(tmp)-1]
+	disk.DiskPart = nombre
+
+	fmt.Println("nombre ", nombre,"directorio ",directorio)
 
 	//recorrer el directorio y buscar discos
 	err := filepath.Walk(directorio, func(path string, info os.FileInfo, err error) error {
@@ -319,7 +350,7 @@ func getDiscos(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		if !info.IsDir() {
-			discos = append(discos, info.Name())
+			disk.Discos = append(disk.Discos, info.Name())
 		}
 		return nil
 	})
@@ -327,7 +358,7 @@ func getDiscos(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Error al buscar archivos: %s", err), http.StatusInternalServerError)
 	}
 
-	respuestaJSON, err := json.Marshal(discos)
+	respuestaJSON, err := json.Marshal(disk)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error al serializar datos a JSON: %s", err), http.StatusInternalServerError)
 		return
@@ -346,9 +377,16 @@ func getParticiones(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filepath := "./Calificacion_MIA/Discos/" + entrada
+	var pathDico string
+	//BUsca en struck de particiones montadas el id ingresado
+	for _,montado := range Structs.Montadas{
+		if montado.Id == entrada{
+			pathDico = montado.PathM	
+			break;		
+		}
+	}
 
-	disco, err := Herramientas.OpenFile(filepath)
+	disco, err := Herramientas.OpenFile(pathDico)
 	if err != nil {
 		fmt.Println("get partciones Error: No se pudo leer el disco")
 		return
@@ -364,18 +402,22 @@ func getParticiones(w http.ResponseWriter, r *http.Request) {
 	// cerrar el archivo del disco
 	defer disco.Close()
 
-	//lista de discos encontrados
-	var particiones []string
+	//lista de discos encontrados	
+	var resPartciones RespuestaPart
 
 	for i := 0; i < 4; i++ {
 		estado := string(mbr.Partitions[i].Status[:])
+		id := string(mbr.Partitions[i].Id[:])
 		if estado == "A" {
-			particiones = append(particiones, string(mbr.Partitions[i].Id[:]))
+			resPartciones.Partciones = append(resPartciones.Partciones, string(mbr.Partitions[i].Id[:]))
+		}
+		if id == entrada{
+			resPartciones.IdParticion = id
 		}
 	}
 
-	fmt.Println("Montadas ", particiones)
-	respuestaJSON, err := json.Marshal(particiones)
+	fmt.Println("Montadas ", resPartciones.Partciones)
+	respuestaJSON, err := json.Marshal(resPartciones)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error al serializar datos a JSON: %s", err), http.StatusInternalServerError)
 		return
@@ -599,7 +641,7 @@ func getFile(w http.ResponseWriter, r *http.Request) {
 	for _, idBlock := range Inode.I_block {
 		if idBlock != -1 {
 			Herramientas.ReadObject(disco, &fileBlock, int64(superBloque.S_block_start+(idBlock*int32(binary.Size(Structs.Fileblock{})))))
-			textFile += string(fileBlock.B_content[:])
+			textFile += Herramientas.EliminartIlegibles(string(fileBlock.B_content[:])) 
 		}
 	}
 
@@ -648,7 +690,7 @@ func getBack(w http.ResponseWriter, r *http.Request) {
 				//apuntador es el apuntador del bloque al inodo (carpeta/archivo), si existe es distinto a -1
 				apuntador := folderBlock.B_content[j].B_inodo
 				if apuntador != -1 {
-					pathActual := Structs.GetB_name(string(folderBlock.B_content[j].B_name[:]))
+					pathActual := Structs.GetB_name(string(folderBlock.B_content[j].B_name[:]))					
 					contenido = append(contenido, pathActual)
 				}
 			}
