@@ -56,8 +56,8 @@ export default function Discos({newIp="localhost"}){
                                 }}
                                 onClick={() => onClick(disco)}
                             >
-                                <img src={diskIMG} alt="disk" style={{width: "100px"}} />
-                                <div class="circle">                                    
+                                <img src={diskIMG} alt="disk" style={{width: "100px"}} />  
+                                <div class="circle">                      
                                     {disco}
                                 </div>
                                 
